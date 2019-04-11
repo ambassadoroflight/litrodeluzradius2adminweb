@@ -1,0 +1,156 @@
+<menu 
+    theme="ThemePanel" 
+    alignment="horizontal" >
+
+    <!--Inicio-->
+    <menuitem 
+        text="menu.home" 
+        url="index.jsp" 
+        icon="framework/images/home_white_16.png" 
+        description="menu.home"/>
+
+    <!--Configuracion-->
+    <menuitem 
+        text="menu.settings" 
+        icon="framework/images/gear_white_16.png"
+        url="#"
+        permission="ADD_USER,EDIT_USER,DELETE_USER,VIEW_USER,ADD_PROFILE,EDIT_PROFILE,DELETE_PROFILE,VIEW_PROFILE">
+        
+        <!--Usuarios-->
+        <menuitem 
+            text="menu.settings.user" 
+            icon="framework/images/user_comtorblue_16.png" 
+            url="index.jsp?option=net.comtor.framework.common.auth.gui.aaa.UserAdmin" 
+            description="menu.settings.user" 
+            permission="ADD_USER,EDIT_USER,DELETE_USER,VIEW_USER"/>
+        
+        <!--Perfiles-->
+        <menuitem 
+            text="menu.settings.profile" 
+            icon="framework/images/group_comtorblue_16.png" 
+            url="index.jsp?option=net.comtor.framework.common.auth.gui.aaa.ProfileAdmin" 
+            description="menu.settings.profile" 
+            permission="ADD_PROFILE,EDIT_PROFILE,DELETE_PROFILE,VIEW_PROFILE"/>
+    </menuitem>
+    
+    <!--Administrar-->
+    <menuitem 
+        text="menu.manage" 
+        icon="framework/images/icons/administrator_white_16.png"
+        url="#"
+        permission="ADD_HOTSPOT,EDIT_HOTSPOT,DELETE_HOTSPOT,VIEW_HOTSPOT,ADD_KIOSK,EDIT_KIOSK,DELETE_KIOSK,VIEW_KIOSK,ADD_SELLER,EDIT_SELLER,DELETE_SELLER,
+VIEW_SELLERADD_PREPAID_RATE,EDIT_PREPAID_RATE,DELETE_PREPAID_RATE,VIEW_PREPAID_RATE,ADD_PREPAID_RATE,EDIT_PREPAID_RATE,DELETE_PREPAID_RATE,VIEW_PREPAID_RATE,
+ADD_HAPPY_HOUR,EDIT_HAPPY_HOUR,DELETE_HAPPY_HOUR,VIEW_HAPPY_HOUR,ADD_SPONSOR,EDIT_SPONSOR,DELETE_SPONSOR,VIEW_SPONSOR">
+                
+        <!--Zonas-->
+        <menuitem 
+            text="Zonas" 
+            icon="framework/images/icons/bandwidth5_comtoblue_16.png" 
+            url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.hotspot.ZoneAdmin" 
+            description="Zonas" 
+            permission="ADD_HOTSPOT,EDIT_HOTSPOT,DELETE_HOTSPOT,VIEW_HOTSPOT"/>   
+        
+        <!--Hotspots-->
+        <menuitem 
+            text="menu.manage.hotspot" 
+            icon="framework/images/icons/bandwidth5_comtoblue_16.png" 
+            url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.hotspot.HotspotAdmin" 
+            description="menu.manage.hotspot" 
+            permission="ADD_HOTSPOT,EDIT_HOTSPOT,DELETE_HOTSPOT,VIEW_HOTSPOT"/>        
+        
+        <!--Publicidad-->
+        <menuitem 
+            text="Publicidad" 
+            icon="framework/images/icons/bandwidth5_comtoblue_16.png" 
+            url="#" 
+            description="Publicidad" 
+            permission="ADD_SPONSOR,EDIT_SPONSOR,DELETE_SPONSOR,VIEW_SPONSOR">   
+            
+            <!--Patrocinadores-->
+            <menuitem 
+                text="Patrocinadores" 
+                icon="framework/images/icons/bandwidth5_comtoblue_16.png" 
+                url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.advertising.SponsorAdmin" 
+                description="Patrocinadores" 
+                permission="ADD_SPONSOR,EDIT_SPONSOR,DELETE_SPONSOR,VIEW_SPONSOR"/>   
+            
+            <!--Encuestas-->
+            <menuitem 
+                text="Encuestas" 
+                icon="framework/images/icons/bandwidth5_comtoblue_16.png" 
+                url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.advertising.SurveyAdmin" 
+                description="Encuestas" 
+                permission="ADD_SPONSOR,EDIT_SPONSOR,DELETE_SPONSOR,VIEW_SPONSOR"/>  
+            
+            <!--Campa&#241;as Publicitarias-->
+            <menuitem 
+                text="Campa&#241;as Publicitarias" 
+                icon="framework/images/icons/bandwidth5_comtoblue_16.png" 
+                url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.advertising.AdvertisingCampaignAdmin" 
+                description="Campa&#241;as Publicitarias" 
+                permission="ADD_SPONSOR,EDIT_SPONSOR,DELETE_SPONSOR,VIEW_SPONSOR"/>  
+        </menuitem>
+                
+        <!--Kioscos-->
+        <menuitem 
+            text="menu.manage.kiosk" 
+            icon="framework/images/icons/kiosk_comtorblue_16.png" 
+            url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.kiosk.KioskAdmin" 
+            description="menu.manage.kiosk" 
+            permission="ADD_KIOSK,EDIT_KIOSK,DELETE_KIOSK,VIEW_KIOSK"/>
+
+        <!--Vendedor/Gestor-->
+        <menuitem 
+            text="menu.manage.seller" 
+            icon="framework/images/icons/salesman_comtorblue_16.png" 
+            url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.seller.SellerAdmin" 
+            description="menu.manage.seller" 
+            permission="ADD_SELLER,EDIT_SELLER,DELETE_SELLER,VIEW_SELLER"/>
+        
+        <!--Tarifas-->
+        <menuitem 
+            text="Tarifa" 
+            icon="framework/images/icons/coin_dollar_comtorblue_16.png" 
+            url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.rate.PrepaidRateAdmin" 
+            description="Tarifa" 
+            permission="ADD_PREPAID_RATE,EDIT_PREPAID_RATE,DELETE_PREPAID_RATE,VIEW_PREPAID_RATE"/>
+       
+        <!--Hora Libre-->
+        <menuitem 
+            text="menu.manage.happyhour" 
+            icon="framework/images/icons/clock_comtorblue_16.png"
+            url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.happyhour.HappyHourAdmin"
+            description="menu.manage.happyhour" 
+            permission="ADD_HAPPY_HOUR,EDIT_HAPPY_HOUR,DELETE_HAPPY_HOUR,VIEW_HAPPY_HOUR"/>
+    </menuitem>
+    
+    <!--Reportes-->
+    <menuitem text="menu.report" 
+              icon="framework/images/report_white_16.png"
+              url="#"
+              permission="VIEW_HISTORY_REPORT,VIEW_SOLD_PIN_X_SELLER_REPORT,VIEW_SOLD_PIN_X_KIOSK_REPORT" >
+        
+        <!--Historico-->
+        <menuitem 
+            text="menu.report.history" 
+            icon="framework/images/report_comtorblue_16.png" 
+            url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.report.LogReportPage" 
+            description="menu.report.history"  
+            permission="VIEW_HISTORY_REPORT"/>
+        
+        <!--Pin Vendido por Vendedor-->
+        <menuitem text="menu.report.soldpinsxseller" 
+                  icon="framework/images/report_comtorblue_16.png" 
+                  url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.report.ListPinSoldReportPage"
+                  description="menu.report.soldpinsxseller"  
+                  permission="VIEW_SOLD_PIN_X_SELLER_REPORT"/>
+        
+        <!--Pin Vendido por Kiosco-->
+        <menuitem 
+            text="menu.report.soldpinsxkiosk" 
+            icon="framework/images/report_comtorblue_16.png" 
+            url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.report.SellerStatsReportPage" 
+            description="menu.report.soldpinsxkiosk"  
+            permission="VIEW_SOLD_PIN_X_KIOSK_REPORT"/>
+    </menuitem>  
+</menu>
