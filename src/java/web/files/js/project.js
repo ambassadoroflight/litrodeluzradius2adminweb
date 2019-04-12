@@ -27,15 +27,9 @@ function showPinTime(obj) {
     $("#duration").text(calculateTotalTime(obj.value));
 }
 
-$(document).ready(function () {
-    var secs = $("#duration_in_seconds").val();
-
-    showPinTime(parseInt(secs, 10));
-});
-
 function addQuestionInput() {
     console.log("Hola Mundo. Vamos a agregar una pregunta!");
-    
+
     $("#questions_area").append("<div class='DivFormField' id='divformrow_question'><span id='question_error'></span><span>Preguntas</span><span><input type='text' name='question' value='' id='question' size='32' maxlength='512' required></span><span></span></div><div class='DivFormField' id='divformrow_options'><span id='options_error'></span><span>Opciones (separadas por barra vertical | )</span><span><textarea name='options' id='options' cols='40' rows='5' maxlength='128' onkeyup='return ismaxlength(this)' required></textarea></span><span></span></div>");
 }
 
@@ -47,3 +41,47 @@ function removeMultiInput(id) {
     $(id + " br:first").remove();
     $(id + " input:first").remove();
 }
+
+function getEndpoint(endpoint, action_type) {
+    $.getJSON(endpoint, function (j) {
+        for (var i = 0; i < j.length; i++) {
+
+            $("#" + j[i].label).css("display", "none");
+            if (action_type !== null || action_type === "append") {
+                $("#" + j[i].label).append(j[i].value);
+            } else {
+                $("#" + j[i].label).html(j[i].value);
+            }
+
+            $("#" + j[i].label).fadeIn();
+
+        }
+    }).done(function (data) {
+
+    }).fail(function (jqXHR) {
+
+    });
+}
+
+$(document).ready(function () {
+    var secs = $("#duration_in_seconds").val();
+    showPinTime(parseInt(secs, 10));
+
+    //Se adjuntan listeners al dom para eventos por ajax
+    $(document).on("click", '.ajaxGet', function (event) {
+        event.preventDefault();
+        var endpoint = $(this).attr("endpoint");
+        var action_type = $(this).attr("action_type");
+        getEndpoint(endpoint, action_type);
+    });
+    
+    $(document).on("click", '.deleteSection', function (event) {
+        event.preventDefault();
+        $(this).parent().remove();
+    });
+
+
+
+});
+
+

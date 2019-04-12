@@ -10,14 +10,20 @@ import net.comtor.dao.ComtorDaoException;
 import net.comtor.exception.BusinessLogicException;
 import net.comtor.framework.logic.facade.WebLogicFacade;
 import net.comtor.html.HtmlBr;
+import net.comtor.html.HtmlContainer;
 import net.comtor.html.HtmlDiv;
+import net.comtor.html.HtmlElement;
+import net.comtor.html.HtmlHr;
+import net.comtor.html.HtmlSpan;
 import net.comtor.html.HtmlText;
 import net.comtor.html.form.HtmlButton;
+import net.comtor.html.form.HtmlInputText;
 import net.comtor.html.form.HtmlRadio;
 import net.comtor.html.form.HtmlTextArea;
 import net.comtor.i18n.html.AbstractComtorFacadeAdministratorControllerI18n;
 import org.unlitrodeluzcolombia.radius.element.Question;
 import org.unlitrodeluzcolombia.radius.element.Survey;
+import org.unlitrodeluzcolombia.radius.enums.QuestionType;
 import org.unlitrodeluzcolombia.radius.facade.QuestionDAOFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.SurveyWebFacade;
 
@@ -43,43 +49,42 @@ public class SurveyController
     }
 
     @Override
-    public void initForm(AdministrableForm form, Survey survey)
-            throws BusinessLogicException {
+    public void initForm(AdministrableForm form, Survey survey) throws BusinessLogicException {
+
         if (survey != null) {
             long surveyId = survey.getId();
-
             form.addInputHidden("id", surveyId);
-
-            HtmlText id = new HtmlText(surveyId);
-            form.addField("ID", id, null);
         }
 
         HtmlTextArea description = new HtmlTextArea("description", 40, 5, 128);
         form.addField("Descripción", description, null);
-
         form.addSubTitle("Preguntas");
-        /*
-         HtmlInputText question = new HtmlInputText("question", 32, 512);
-         form.addField("Preguntas", question, null);
-
-         HtmlTextArea options = new HtmlTextArea("options", 40, 5, 128);
-         form.addField("Opciones (separadas por barra vertical | )", options, null);*/
 
         HtmlDiv questions_area = new HtmlDiv("questions_area");
+        if (survey != null) {
+            survey.getQuestions().forEach((question) -> {
+                questions_area.add(getQuestionTag(question.getQuestion(), question.getOptions()));
+            });
+        }
         form.addRowInOneCell(questions_area);
 
-        HtmlButton addQuestionButton = new HtmlButton(HtmlButton.SCRIPT_BUTTON,
-                "add_question", "+", "addQuestionInput();");
-        addQuestionButton.addAttribute("title", "Agregar Pregunta");
-        form.addRowInOneCell(addQuestionButton);
+        HtmlContainer container = new HtmlContainer();
+        container.add(getAddQuestionButton("Agregar pregunta abierta", QuestionType.OPEN_QUESTION.toString(), "#D0F5A9"))
+                .add(getAddQuestionButton("Agregar de selección simple", QuestionType.SINGLE.toString(), "#A9E2F3"))
+                .add(getAddQuestionButton("Agregar de selección múltiple", QuestionType.MULTIPLE.toString(), "#D0A9F5"))
+                .add(new HtmlHr());
+        form.addRowInOneCell(container);
 
+    }
 
-        /*  HtmlInputText option;
-
-         for (int i = 1; i <= 10; i++) {
-         option = new HtmlInputText("option_" + i);
-         form.addField("Opción " + i, option, null);
-         }*/
+    private HtmlButton getAddQuestionButton(String title, String keyword, String color) {
+        HtmlButton addQuestionButton = new HtmlButton(HtmlButton.SCRIPT_BUTTON, "add_question", title);
+        addQuestionButton.addAttribute("class", "ajaxGet");
+        addQuestionButton.addAttribute("title", title);
+        addQuestionButton.addAttribute("style", "color:" + color);
+        addQuestionButton.addAttribute("endpoint", "webservices/survey_service/question_tag/" + keyword);
+        addQuestionButton.addAttribute("action_type", "append");
+        return addQuestionButton;
     }
 
     @Override
@@ -184,6 +189,41 @@ public class SurveyController
     @Override
     public String getViewPrivilegeMsg() {
         return "Ud. no tiene permisos para ingresar a este módulo.";
+    }
+
+    public HtmlElement getQuestionTag(String question, String options) {
+
+        HtmlInputText inputText = new HtmlInputText("question", 32, 512);
+        inputText.addAttribute("required", "required");
+        inputText.setValue(question);
+
+        HtmlDiv divForm = new HtmlDiv();
+        divForm.setClass("DivFormField");
+        divForm.add(new HtmlSpan("question_error"))
+                .add(new HtmlSpan("sp1", "Preguntas"))
+                .add(new HtmlSpan().add(inputText))
+                .add(new HtmlSpan());
+
+        HtmlTextArea textArea = new HtmlTextArea("options", "", 40, 5, 128);
+        textArea.addAttribute("onkeyup", "return ismaxlength(this)");
+        textArea.addAttribute("required", "required");
+        textArea.setValue(options);
+
+        HtmlDiv divTxA = new HtmlDiv();
+        divTxA.setClass("DivFormField")
+                .add(new HtmlSpan("option_error"))
+                .add(new HtmlSpan("", "Opciones (separadas por barra vertical | )"))
+                .add(textArea);
+
+        HtmlButton button = new HtmlButton(HtmlButton.SCRIPT_BUTTON, "delete_question", "Eliminar");
+        button.addAttribute("class", "deleteSection");
+
+        return new HtmlDiv().addAttribute("class", "div-answer-content")
+                .add(new HtmlBr())
+                .add(divForm)
+                .add(divTxA)
+                .add(button)
+                .add(new HtmlHr());
     }
 
 }

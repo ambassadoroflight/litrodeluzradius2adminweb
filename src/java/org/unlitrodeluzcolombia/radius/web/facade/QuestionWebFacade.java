@@ -10,7 +10,6 @@ import org.unlitrodeluzcolombia.radius.facade.QuestionDAOFacade;
  * @since 1.8
  * @version Apr 10, 2019
  */
-public class QuestionWebFacade
-        extends AbstractWebLogicFacade<Question, Long, QuestionDAOFacade> {
+public class QuestionWebFacade extends AbstractWebLogicFacade<Question, Long, QuestionDAOFacade> {
 
 }
