@@ -37,6 +37,13 @@ public class Question implements Serializable {
         this.options = options;
     }
 
+    public Question(long survey, String question, String options, String type) {
+        this.survey = survey;
+        this.question = question;
+        this.options = options;
+        this.type = type;
+    }
+
     public long getId() {
         return id;
     }
@@ -78,7 +85,7 @@ public class Question implements Serializable {
     }
 
     public String[] getOptionsArray() {
-        return options.split("\\|");
+        return options.split("\r\n");
     }
 
     @Override

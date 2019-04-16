@@ -27,8 +27,6 @@ public class Survey implements Serializable {
     @ComtorSequence(name = ComtorJDBCDao.MYSQL_SEQUENCE, typeInsert = ComtorSequence.POST_INSERT)
     private long id;
     private String description;
-    @ComtorOneToMany(joinColumn = "survey", targetEntity = Question.class, cascade = Cascade.SELECT)
-    LinkedList<Question> questions;
 
     public Survey() {
     }
@@ -47,14 +45,6 @@ public class Survey implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public LinkedList<Question> getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(LinkedList<Question> questions) {
-        this.questions = questions;
     }
 
     @Override

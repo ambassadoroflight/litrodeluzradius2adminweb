@@ -25,11 +25,16 @@ public class SurveyWebFacade extends AbstractWebLogicFacade<Survey, Long, Survey
 
         String[] questions = getRequest().getParameterValues("question");
         String[] options = getRequest().getParameterValues("options");
+        String[] types = getRequest().getParameterValues("type");
 
-        QuestionWebFacade questionFacade = new QuestionWebFacade();
+        QuestionDAOFacade questionDAOFacade = new QuestionDAOFacade();;
 
         for (int i = 0; i < questions.length; i++) {
-            questionFacade.insert(new Question(survey.getId(), questions[i], options[i]));
+            try {
+                questionDAOFacade.create(new Question(survey.getId(), questions[i], options[i], types[i]));
+            } catch (ComtorDaoException ex) {
+                Logger.getLogger(SurveyWebFacade.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
     }
@@ -37,18 +42,33 @@ public class SurveyWebFacade extends AbstractWebLogicFacade<Survey, Long, Survey
     @Override
     public void update(Survey survey) throws BusinessLogicException {
         super.update(survey);
+        QuestionDAOFacade questionDAOFacade = new QuestionDAOFacade();
 
-        String[] questions = getRequest().getParameterValues("question");
-        String[] options = getRequest().getParameterValues("options");
+        try {
 
-        QuestionWebFacade questionFacade = new QuestionWebFacade();
+            String[] questions = getRequest().getParameterValues("question");
+            String[] options = getRequest().getParameterValues("options");
+            String[] types = getRequest().getParameterValues("type");
 
-        for (int i = 0; i < questions.length; i++) {
-            questionFacade.insert(new Question(survey.getId(), questions[i], options[i]));
+            if (questions == null) {
+                return;
+            }
+
+            if (survey == null) {
+                System.out.println("ES IGUAL A NULL");
+            } else {
+                System.out.println("NO ES IGUAL A NULL " + survey.toString());
+            }
+            questionDAOFacade.deleteAllBySurveyId(survey.getId());
+
+            for (int i = 0; i < questions.length; i++) {
+                questionDAOFacade.create(new Question(survey.getId(), questions[i], options[i], types[i]));
+            }
+        } catch (ComtorDaoException ex) {
+            Logger.getLogger(SurveyWebFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
-    
-    
 
     @Override
     public Survey find(Long key) throws BusinessLogicException {
@@ -56,15 +76,16 @@ public class SurveyWebFacade extends AbstractWebLogicFacade<Survey, Long, Survey
         if (survey == null) {
             return null;
         }
-        LinkedList<Question> l;
-        try {
-            l = new QuestionDAOFacade().findAllByProperty("survey", survey.getId());
-            survey.setQuestions(l);
-
-        } catch (ComtorDaoException ex) {
-            throw new BusinessLogicException(ex);
-        }
         return survey;
+    }
+
+    public boolean isEditable(Survey survery) {
+        try {
+            return getDaoFacade().haveAnswers(survery.getId());
+        } catch (ComtorDaoException ex) {
+            Logger.getLogger(SurveyWebFacade.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
 }

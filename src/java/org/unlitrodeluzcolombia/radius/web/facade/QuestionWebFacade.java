@@ -12,4 +12,15 @@ import org.unlitrodeluzcolombia.radius.facade.QuestionDAOFacade;
  */
 public class QuestionWebFacade extends AbstractWebLogicFacade<Question, Long, QuestionDAOFacade> {
 
+    /**
+     * Elmina todas las preguntas asociadas a la encuasta
+     *
+     * @param surveyId
+     * @return el numero de registros eliminados
+     */
+    public boolean deleteFromSurveyId(long surveyId) {
+        getDaoFacade().deleteAllBySurveyId(surveyId);
+        return true;
+    }
+
 }

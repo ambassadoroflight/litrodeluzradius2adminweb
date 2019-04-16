@@ -9,14 +9,16 @@ import net.comtor.advanced.html.form.HtmlRadioGroup;
 import net.comtor.dao.ComtorDaoException;
 import net.comtor.exception.BusinessLogicException;
 import net.comtor.framework.logic.facade.WebLogicFacade;
+import net.comtor.framework.util.security.SecurityHelper;
 import net.comtor.html.HtmlBr;
 import net.comtor.html.HtmlContainer;
 import net.comtor.html.HtmlDiv;
 import net.comtor.html.HtmlElement;
 import net.comtor.html.HtmlHr;
-import net.comtor.html.HtmlSpan;
 import net.comtor.html.HtmlText;
 import net.comtor.html.form.HtmlButton;
+import net.comtor.html.form.HtmlCheckbox;
+import net.comtor.html.form.HtmlInput;
 import net.comtor.html.form.HtmlInputText;
 import net.comtor.html.form.HtmlRadio;
 import net.comtor.html.form.HtmlTextArea;
@@ -25,6 +27,8 @@ import org.unlitrodeluzcolombia.radius.element.Question;
 import org.unlitrodeluzcolombia.radius.element.Survey;
 import org.unlitrodeluzcolombia.radius.enums.QuestionType;
 import org.unlitrodeluzcolombia.radius.facade.QuestionDAOFacade;
+import org.unlitrodeluzcolombia.radius.facade.SurveyDAOFacade;
+import org.unlitrodeluzcolombia.radius.gui.advertising.commons.QuestionFieldGenerator;
 import org.unlitrodeluzcolombia.radius.web.facade.SurveyWebFacade;
 
 /**
@@ -33,8 +37,7 @@ import org.unlitrodeluzcolombia.radius.web.facade.SurveyWebFacade;
  * @since 1.8
  * @version Apr 10, 2019
  */
-public class SurveyController
-        extends AbstractComtorFacadeAdministratorControllerI18n<Survey, Long> {
+public class SurveyController extends AbstractComtorFacadeAdministratorControllerI18n<Survey, Long> {
 
     private static final Logger LOG = Logger.getLogger(SurveyController.class.getName());
 
@@ -57,13 +60,23 @@ public class SurveyController
         }
 
         HtmlTextArea description = new HtmlTextArea("description", 40, 5, 128);
+        description.addAttribute("required", "required");
         form.addField("Descripción", description, null);
         form.addSubTitle("Preguntas");
 
         HtmlDiv questions_area = new HtmlDiv("questions_area");
         if (survey != null) {
-            survey.getQuestions().forEach((question) -> {
-                questions_area.add(getQuestionTag(question.getQuestion(), question.getOptions()));
+            QuestionDAOFacade daoFacade = new QuestionDAOFacade();
+            LinkedList<Question> questions = new LinkedList<>();
+            try {
+                questions = daoFacade.findAllByProperty("survey", survey.getId());
+            } catch (ComtorDaoException ex) {
+                Logger.getLogger(SurveyController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            QuestionFieldGenerator questionFieldGenerator = new QuestionFieldGenerator();
+            questions.forEach((question) -> {
+                questions_area.add(questionFieldGenerator.getQuestionTag(question.getType(), question.getQuestion(), question.getOptions()));
             });
         }
         form.addRowInOneCell(questions_area);
@@ -90,10 +103,8 @@ public class SurveyController
     @Override
     public void initFormView(AdministrableForm form, Survey survey) {
         try {
-            HtmlText field = new HtmlText(survey.getId());
-            form.addField("ID", field, null);
 
-            field = new HtmlText(survey.getDescription());
+            HtmlText field = new HtmlText(survey.getDescription());
             form.addField("Descripción", field, null);
 
             form.addSubTitle("Preguntas");
@@ -107,14 +118,7 @@ public class SurveyController
                 field = new HtmlText(question.getQuestion());
                 form.addField("Pregunta #" + i, field, null);
 
-                HtmlRadioGroup options = new HtmlRadioGroup();
-
-                for (String option : question.getOptionsArray()) {
-                    options.addElement(new HtmlRadio("options", option, option));
-                    options.addElement(new HtmlBr());
-                }
-
-                form.addField("", options, null);
+                form.addField("", getOptionField(question), null);
 
                 i++;
             }
@@ -124,25 +128,52 @@ public class SurveyController
 
     }
 
-//    @Override
-//    public Survey getObjectFromRequest(HttpServletMixedRequest request)
-//            throws ComtorAdministrableHtmlException {
-//        Survey survey = super.getObjectFromRequest(request);
-//        long id = survey.getId();
-//
-//        if (id <= 0) {
-//            return survey;
-//        }
-//
-//        try {
-//            LinkedList<Question> questions = new QuestionDAOFacade().findAllByProperty("survey", id);
-//            survey.setQuestions(questions);
-//
-//            return survey;
-//        } catch (ComtorDaoException ex) {
-//            throw new ComtorAdministrableHtmlException(ex);
-//        }
-//    }
+    public HtmlElement getOptionField(Question question) {
+        if (question.getType().equals(QuestionType.OPEN_QUESTION.toString())) {
+
+            switch (question.getOptions()) {
+                case "text":
+                    HtmlInputText inputText = new HtmlInputText("options");
+                    inputText.setReadOnly(false);
+                    return inputText;
+                case "phone":
+                    HtmlInput inputPhone = new HtmlInput("phone", "options", "");
+                    inputPhone.setReadOnly(false);
+                    return inputPhone;
+                case "date":
+                    HtmlInput inputDate = new HtmlInput("date", "options", "");
+                    inputDate.setReadOnly(false);
+                    inputDate.addAttribute("pattern", "[0-9]{4}-[0-9]{2}-[0-9]{2}");
+                    return inputDate;
+                case "email":
+                    HtmlInput inputEmail = new HtmlInput("email", "options", "");
+                    inputEmail.setReadOnly(false);
+                    return inputEmail;
+                case "number":
+                    HtmlInput inputNumber = new HtmlInput("number", "options", "");
+                    inputNumber.setReadOnly(false);
+                    return inputNumber;
+            }
+        }
+
+        if (question.getType().equals(QuestionType.SINGLE.toString())) {
+            HtmlRadioGroup options = new HtmlRadioGroup();
+            for (String option : question.getOptionsArray()) {
+                options.addElement(new HtmlRadio("options", option, option));
+                options.addElement(new HtmlBr());
+            }
+            return options;
+        }
+
+        HtmlContainer container = new HtmlContainer();
+        for (String option : question.getOptionsArray()) {
+            container.addElement(new HtmlCheckbox("options", option, option));
+            container.addElement(new HtmlBr());
+        }
+        return container;
+
+    }
+
     @Override
     public String getAddPrivilege() {
         return "ADD_SPONSOR";
@@ -171,7 +202,6 @@ public class SurveyController
     @Override
     public LinkedHashMap<String, String> getHeaders() {
         LinkedHashMap<String, String> headers = new LinkedHashMap<>();
-        headers.put("id", "ID");
         headers.put("description", "Descripción");
 
         return headers;
@@ -180,7 +210,6 @@ public class SurveyController
     @Override
     public LinkedList<Object> getRow(Survey survey) {
         LinkedList<Object> row = new LinkedList<>();
-        row.add(survey.getId());
         row.add(survey.getDescription());
 
         return row;
@@ -191,39 +220,41 @@ public class SurveyController
         return "Ud. no tiene permisos para ingresar a este módulo.";
     }
 
-    public HtmlElement getQuestionTag(String question, String options) {
+    @Override
+    public void addBasicButtons(AdministrableForm form, int action, Survey object) {
+        super.addBasicButtons(form, action, object); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        HtmlInputText inputText = new HtmlInputText("question", 32, 512);
-        inputText.addAttribute("required", "required");
-        inputText.setValue(question);
+    @Override
+    protected LinkedList<String> getBasicActionLinks(Survey object) {
+        LinkedList<String> actions = new LinkedList<>();
 
-        HtmlDiv divForm = new HtmlDiv();
-        divForm.setClass("DivFormField");
-        divForm.add(new HtmlSpan("question_error"))
-                .add(new HtmlSpan("sp1", "Preguntas"))
-                .add(new HtmlSpan().add(inputText))
-                .add(new HtmlSpan());
+        if ((getEditPrivilege() != null) && isEditable(object)
+                && (SecurityHelper.can(getEditPrivilege(), getRequest()))) {
+            actions.add(getEditIcon(getBaseUrl(), object));
+        }
 
-        HtmlTextArea textArea = new HtmlTextArea("options", "", 40, 5, 128);
-        textArea.addAttribute("onkeyup", "return ismaxlength(this)");
-        textArea.addAttribute("required", "required");
-        textArea.setValue(options);
+        if ((getDeletePrivilege() != null)
+                && (SecurityHelper.can(getDeletePrivilege(), getRequest()))) {
+            actions.add(getDeleteIcon(getBaseUrl(), object));
+        }
 
-        HtmlDiv divTxA = new HtmlDiv();
-        divTxA.setClass("DivFormField")
-                .add(new HtmlSpan("option_error"))
-                .add(new HtmlSpan("", "Opciones (separadas por barra vertical | )"))
-                .add(textArea);
+        if ((getViewPrivilege() != null)
+                && (SecurityHelper.can(getViewPrivilege(), getRequest()))) {
+            actions.add(getViewIcon(getBaseUrl(), object));
+        }
 
-        HtmlButton button = new HtmlButton(HtmlButton.SCRIPT_BUTTON, "delete_question", "Eliminar");
-        button.addAttribute("class", "deleteSection");
+        return actions;
+    }
 
-        return new HtmlDiv().addAttribute("class", "div-answer-content")
-                .add(new HtmlBr())
-                .add(divForm)
-                .add(divTxA)
-                .add(button)
-                .add(new HtmlHr());
+    private boolean isEditable(Survey survey) {
+        SurveyDAOFacade daoFacade = new SurveyDAOFacade();
+        try {
+            return daoFacade.haveAnswers(survey.getId());
+        } catch (ComtorDaoException ex) {
+            Logger.getLogger(SurveyController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
 }
