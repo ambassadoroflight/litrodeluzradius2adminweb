@@ -1,6 +1,5 @@
 package org.unlitrodeluzcolombia.radius.facade;
 
-import net.comtor.dao.ComtorDaoException;
 import net.comtor.dao.generics.ComtorDaoElementLogicFacade;
 import org.unlitrodeluzcolombia.radius.element.Question;
 

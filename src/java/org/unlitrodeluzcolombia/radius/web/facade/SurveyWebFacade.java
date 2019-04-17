@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.comtor.dao.ComtorDaoException;
 import net.comtor.exception.BusinessLogicException;
+import net.comtor.framework.error.ObjectValidatorException;
 import net.comtor.framework.logic.facade.AbstractWebLogicFacade;
 import org.unlitrodeluzcolombia.radius.element.Question;
 import org.unlitrodeluzcolombia.radius.element.Survey;
@@ -19,6 +20,25 @@ import org.unlitrodeluzcolombia.radius.facade.SurveyDAOFacade;
  */
 public class SurveyWebFacade extends AbstractWebLogicFacade<Survey, Long, SurveyDAOFacade> {
 
+    private static final Logger LOG = Logger.getLogger(SurveyWebFacade.class.getName());
+
+    @Override
+    public LinkedList<ObjectValidatorException> validateObjectPreAdd(Survey survey) {
+        return validate(survey);
+    }
+
+    @Override
+    public LinkedList<ObjectValidatorException> validateObjectPreEdit(Survey survey) {
+        if (!isEditable(survey)) {
+            LinkedList<ObjectValidatorException> exceptions = new LinkedList<>();
+            exceptions.add(new ObjectValidatorException("description", "Esta encuesta "
+                    + "no es editable porque ya ha sido respondida."));
+            return exceptions;
+        }
+
+        return validate(survey);
+    }
+
     @Override
     public void insert(Survey survey) throws BusinessLogicException {
         super.insert(survey);
@@ -31,9 +51,10 @@ public class SurveyWebFacade extends AbstractWebLogicFacade<Survey, Long, Survey
 
         for (int i = 0; i < questions.length; i++) {
             try {
-                questionDAOFacade.create(new Question(survey.getId(), questions[i], options[i], types[i]));
+                questionDAOFacade.create(new Question(survey.getId(), questions[i],
+                        options[i], types[i]));
             } catch (ComtorDaoException ex) {
-                Logger.getLogger(SurveyWebFacade.class.getName()).log(Level.SEVERE, null, ex);
+                LOG.log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
 
@@ -45,7 +66,6 @@ public class SurveyWebFacade extends AbstractWebLogicFacade<Survey, Long, Survey
         QuestionDAOFacade questionDAOFacade = new QuestionDAOFacade();
 
         try {
-
             String[] questions = getRequest().getParameterValues("question");
             String[] options = getRequest().getParameterValues("options");
             String[] types = getRequest().getParameterValues("type");
@@ -59,13 +79,15 @@ public class SurveyWebFacade extends AbstractWebLogicFacade<Survey, Long, Survey
             } else {
                 System.out.println("NO ES IGUAL A NULL " + survey.toString());
             }
+
             questionDAOFacade.deleteAllBySurveyId(survey.getId());
 
             for (int i = 0; i < questions.length; i++) {
-                questionDAOFacade.create(new Question(survey.getId(), questions[i], options[i], types[i]));
+                questionDAOFacade.create(new Question(survey.getId(), questions[i],
+                        options[i], types[i]));
             }
         } catch (ComtorDaoException ex) {
-            Logger.getLogger(SurveyWebFacade.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
         }
 
     }
@@ -83,9 +105,32 @@ public class SurveyWebFacade extends AbstractWebLogicFacade<Survey, Long, Survey
         try {
             return getDaoFacade().haveAnswers(survery.getId());
         } catch (ComtorDaoException ex) {
-            Logger.getLogger(SurveyWebFacade.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return false;
+    }
+
+    private LinkedList<ObjectValidatorException> validate(Survey survey) {
+        LinkedList<ObjectValidatorException> exceptions = new LinkedList<>();
+
+        if (survey.getCampaign() <= 0) {
+            exceptions.add(new ObjectValidatorException("campaign", "Debe indicar "
+                    + "a qué campaña pertenece esta encuesta."));
+        }
+
+        String[] questions = getRequest().getParameterValues("question");
+        String[] options = getRequest().getParameterValues("options");
+
+        if (((questions == null) || (questions.length == 0))
+                || ((options == null) || (options.length == 0))) {
+            String message = "Debe agregar preguntas y opciones a la encuesta";
+
+            exceptions.add(new ObjectValidatorException("description", message));
+            exceptions.add(new ObjectValidatorException("question", message));
+            exceptions.add(new ObjectValidatorException("options", message));
+        }
+
+        return exceptions;
     }
 
 }

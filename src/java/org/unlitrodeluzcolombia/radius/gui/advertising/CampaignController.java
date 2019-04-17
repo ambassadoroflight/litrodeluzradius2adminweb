@@ -1,43 +1,49 @@
 package org.unlitrodeluzcolombia.radius.gui.advertising;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.comtor.advanced.administrable.AdministrableForm;
+import net.comtor.advanced.html.BigTable;
 import net.comtor.advanced.html.HtmlCalendarJQuery;
 import net.comtor.advanced.html.HtmlFinder;
+import net.comtor.dao.ComtorDaoException;
 import net.comtor.exception.BusinessLogicException;
-import net.comtor.framework.global.ComtorGlobal;
+import net.comtor.framework.html.administrable.ComtorAdministrableHtmlException;
 import net.comtor.framework.logic.facade.WebLogicFacade;
+import net.comtor.framework.request.HttpServletMixedRequest;
 import net.comtor.framework.util.FormUtil;
 import net.comtor.html.HtmlImg;
-import net.comtor.html.HtmlLink;
+import net.comtor.html.HtmlLi;
 import net.comtor.html.HtmlText;
+import net.comtor.html.HtmlUl;
 import net.comtor.html.form.HtmlCheckbox;
 import net.comtor.html.form.HtmlInputFile;
 import net.comtor.html.form.HtmlInputText;
 import net.comtor.i18n.html.AbstractComtorFacadeAdministratorControllerI18n;
-import net.comtor.radius.element.AdvertisingCampaign;
+import net.comtor.radius.element.Campaign;
 import net.comtor.radius.element.Sponsor;
-import org.unlitrodeluzcolombia.radius.element.Survey;
+import net.comtor.radius.element.Zone;
+import net.comtor.radius.facade.CampaignXZoneDAOFacade;
 import org.unlitrodeluzcolombia.radius.gui.finder.SponsorFinder;
-import org.unlitrodeluzcolombia.radius.gui.finder.SurveyFinder;
-import org.unlitrodeluzcolombia.radius.web.facade.AdvertisingCampaignWebFacade;
+import org.unlitrodeluzcolombia.radius.web.facade.CampaignWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.SponsorWebFacade;
-import org.unlitrodeluzcolombia.radius.web.facade.SurveyWebFacade;
+import org.unlitrodeluzcolombia.radius.web.facade.ZoneWebFacade;
 import web.Images;
 
 /**
  *
  * @author juandiego@comtor.net
  * @since 1.8
- * @version Apr 04, 2019
+ * @version Apr 16, 2019
  */
-public class AdvertisingCampaignController
-        extends AbstractComtorFacadeAdministratorControllerI18n<AdvertisingCampaign, Long> {
+public class CampaignController
+        extends AbstractComtorFacadeAdministratorControllerI18n<Campaign, Long> {
 
-    private static final Logger LOG = Logger.getLogger(AdvertisingCampaignController.class.getName());
+    private static final Logger LOG = Logger.getLogger(CampaignController.class.getName());
 
     @Override
     public String getEntityName() {
@@ -45,12 +51,12 @@ public class AdvertisingCampaignController
     }
 
     @Override
-    public WebLogicFacade<AdvertisingCampaign, Long> getLogicFacade() {
-        return new AdvertisingCampaignWebFacade();
+    public WebLogicFacade<Campaign, Long> getLogicFacade() {
+        return new CampaignWebFacade();
     }
 
     @Override
-    public void initForm(AdministrableForm form, AdvertisingCampaign campaign)
+    public void initForm(AdministrableForm form, Campaign campaign)
             throws BusinessLogicException {
         form.setEnctype(AdministrableForm.ENCTYPE_MULTIPART_FORM_DATA);
 
@@ -58,19 +64,13 @@ public class AdvertisingCampaignController
             HtmlFinder sponsor = getSponsorFinder(campaign);
             form.addField("Patrocinador", sponsor, null, true);
         } else {
-            long adId = campaign.getId();
-            long sponsorId = campaign.getSponsor();
-
-            form.addInputHidden("id", adId);
-            form.addInputHidden("sponsor", sponsorId);
+            form.addInputHidden("id", campaign.getId());
             form.addInputHidden("banner_1", campaign.getBanner_1());
             form.addInputHidden("banner_2", campaign.getBanner_2());
+            form.addInputHidden("sponsor", campaign.getSponsor());
 
-            HtmlText field = new HtmlText(adId);
-            form.addField("ID", field, null);
-
-            field = new HtmlText("[" + sponsorId + "] " + campaign.getSponsor_name());
-            form.addField("Patrocinador", field, null);
+            HtmlText sponsor = new HtmlText(campaign.getSponsor_name());
+            form.addField("Patrocinador", sponsor, null);
         }
 
         HtmlInputText description = new HtmlInputText("description", 32, 64);
@@ -94,9 +94,6 @@ public class AdvertisingCampaignController
         HtmlInputFile banner_2 = new HtmlInputFile("banner_2_file");
         form.addField("Banner #2", banner_2, "Debe subir una imagen de 991x1500 pixeles", true);
 
-        HtmlFinder survey = getSurveyFinder(campaign);
-        form.addField("Encuesta", survey, null, true);
-
         HtmlCalendarJQuery start_date = FormUtil.getFilterDatepicker("start_date",
                 FormUtil.DatepickerRange.CURRENT_MONTH);
         form.addField("Desde", start_date, "Indique desde qué fecha se estará "
@@ -106,16 +103,16 @@ public class AdvertisingCampaignController
         form.addField("Hasta", end_date, "Indique hasta qué fecha se "
                 + "estará disponible esta campaña.");
 
-        HtmlCheckbox active = new HtmlCheckbox("active", "active");
-        active.checked((campaign == null) ? true : campaign.isActive());
-        form.addField("Activo", active, "Indique si esta campaña se encuentra "
-                + "activa para visualización en los hotspot.");
+        try {
+            getZonesCheckList(form, campaign);
+        } catch (ComtorDaoException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
-    public void initFormView(AdministrableForm form, AdvertisingCampaign campaign) {
-        HtmlText field = new HtmlText(campaign.getId());
-        form.addField("ID", field, null);
+    public void initFormView(AdministrableForm form, Campaign campaign) {
+        HtmlText field;
 
         field = new HtmlText("[" + campaign.getSponsor() + "] " + campaign.getSponsor_name());
         form.addField("Patrocinador", field, null);
@@ -129,26 +126,38 @@ public class AdvertisingCampaignController
         img = new HtmlImg("ImagesServlet?id=" + campaign.getId() + "&banner=2");
         form.addField("Banner #2", img, null);
 
-        long survey = campaign.getSurvey();
-
-        if (survey == 0) {
-            field = new HtmlText("Ninguna");
-            form.addField("Encuesta", img, null);
-        } else {
-            HtmlLink link = new HtmlLink("[" + survey + "] Ver encuesta",
-                    ComtorGlobal.getLink(SurveyAdmin.class) + "&action=viewform&key="
-                    + survey);
-            form.addField("Encuesta", link, null);
-        }
-
         field = new HtmlText(campaign.getStart_date());
         form.addField("Desde", field, null);
 
         field = new HtmlText(campaign.getEnd_date());
         form.addField("Hasta", field, null);
 
-        field = new HtmlText(campaign.getStatus());
-        form.addField("Estado", field, null);
+        try {
+            List<Long> zonesIds = new CampaignXZoneDAOFacade().findAllByCampaign(campaign.getId());
+
+            if (!zonesIds.isEmpty()) {
+                ZoneWebFacade zoneFacade = new ZoneWebFacade();
+                HtmlUl list = new HtmlUl();
+                Zone zone;
+                HtmlLi item;
+
+                for (Long id : zonesIds) {
+                    zone = zoneFacade.find(id);
+                    
+                    item = new HtmlLi();
+                    item.addElement(zone.getName());
+                    
+                    list.addElement(item);
+                }
+
+                form.addField("Zonas", list, "Estas son las zonas donde está presente esta campaña.");
+            }
+
+        } catch (ComtorDaoException ex) {
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
+        } catch (BusinessLogicException ex) {
+            Logger.getLogger(CampaignController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -173,7 +182,7 @@ public class AdvertisingCampaignController
 
     @Override
     public String getFormName() {
-        return "advertising_campaign_form";
+        return "campaign_form";
     }
 
     @Override
@@ -184,13 +193,12 @@ public class AdvertisingCampaignController
         headers.put("description", "Descripción");
         headers.put("start_date", "Desde");
         headers.put("end_date", "Hasta");
-        headers.put("active", "Estado");
 
         return headers;
     }
 
     @Override
-    public LinkedList<Object> getRow(AdvertisingCampaign sponsor) {
+    public LinkedList<Object> getRow(Campaign sponsor) {
         java.sql.Date endDate = sponsor.getEnd_date();
 
         LinkedList<Object> row = new LinkedList<>();
@@ -199,7 +207,6 @@ public class AdvertisingCampaignController
         row.add(sponsor.getDescription());
         row.add(sponsor.getStart_date());
         row.add((endDate == null) ? "" : endDate);
-        row.add(sponsor.getStatus());
 
         return row;
     }
@@ -230,25 +237,25 @@ public class AdvertisingCampaignController
     }
 
     @Override
-    public String getConfirmDeleteMessage(AdvertisingCampaign campaign) {
+    public String getConfirmDeleteMessage(Campaign campaign) {
         return "¿Está seguro que desea eliminar la campaña publicitaria <b>["
                 + campaign.getId() + "] " + campaign.getDescription() + "</b>?";
     }
 
     @Override
-    public String getAddedMessage(AdvertisingCampaign campaign) {
+    public String getAddedMessage(Campaign campaign) {
         return "La campaña publicitaria <b>[" + campaign.getId() + "] "
                 + campaign.getDescription() + "</b> ha sido creada.";
     }
 
     @Override
-    public String getDeletedMessage(AdvertisingCampaign campaign) {
+    public String getDeletedMessage(Campaign campaign) {
         return "La campaña publicitaria <b>[" + campaign.getId() + "] "
                 + campaign.getDescription() + "</b> ha sido eliminada.";
     }
 
     @Override
-    public String getUpdatedMessage(AdvertisingCampaign campaign) {
+    public String getUpdatedMessage(Campaign campaign) {
         return "La campaña publicitaria <b>[" + campaign.getId() + "] "
                 + campaign.getDescription() + "</b> ha sido actualizada.";
     }
@@ -258,7 +265,27 @@ public class AdvertisingCampaignController
         return "Ud. no tiene permisos para ingresar a este módulo.";
     }
 
-    private HtmlFinder getSponsorFinder(final AdvertisingCampaign campaign) {
+    @Override
+    public Campaign getObjectFromRequest(HttpServletMixedRequest request)
+            throws ComtorAdministrableHtmlException {
+        Campaign campaign = super.getObjectFromRequest(request);
+        campaign.setZones(getZones(request));
+
+        return campaign;
+    }
+
+    private LinkedList<String> getZones(HttpServletMixedRequest request) {
+        String[] zones = request.getMparser().getParameterValues("zones");
+        LinkedList<String> list = new LinkedList<>();
+
+        if (zones != null) {
+            list.addAll(Arrays.asList(zones));
+        }
+
+        return list;
+    }
+
+    private HtmlFinder getSponsorFinder(final Campaign campaign) {
         Sponsor sponsor = null;
         String valueToShow = "";
 
@@ -278,24 +305,61 @@ public class AdvertisingCampaignController
         return new HtmlFinder("sponsor", SponsorFinder.class, valueToShow, 32);
     }
 
-    private HtmlFinder getSurveyFinder(final AdvertisingCampaign campaign) {
-        Survey survey = null;
-        String valueToShow = "";
+    private void getZonesCheckList(AdministrableForm form, Campaign campaign)
+            throws ComtorDaoException {
+        BigTable table = new BigTable("big_table", "zone_table");
+        table.setHeaders("Seleccione a qué zonas cubrirá esta campaña");
+        table.setHeaderColspan(3);
 
         try {
-            survey = ((campaign == null)
-                    ? null
-                    : new SurveyWebFacade().find(campaign.getSurvey()));
-            valueToShow = ((survey == null)
-                    ? ""
-                    : new SurveyFinder().getValueToShow(survey));
-        } catch (Exception ex) {
-            LOG.log(Level.SEVERE, ex.getMessage(), ex);
+            LinkedList<Zone> allZones = new ZoneWebFacade().findAll();
 
-            return null;
+            if (!allZones.isEmpty()) {
+                List<Long> zonesByCampaign = new LinkedList();
+
+                if (campaign != null) {
+                    zonesByCampaign
+                            = new CampaignXZoneDAOFacade().findAllByCampaign(campaign.getId());
+                }
+
+                int col = 0;
+
+                LinkedList<Object> row = new LinkedList<>();
+
+                for (Zone zone : allZones) {
+                    HtmlCheckbox checkbok = new HtmlCheckbox("zones", "" + zone.getId(),
+                            zone.getName());
+
+                    if (campaign != null) {
+                        if (!zonesByCampaign.isEmpty()) {
+                            for (Long zone1 : zonesByCampaign) {
+                                if (zone1 == zone.getId()) {
+                                    checkbok.checked(true);
+
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    row.add(checkbok.getHtml());
+                    col++;
+
+                    if (col >= 3) {
+                        table.addRow(new LinkedList<>(row));
+                        row.clear();
+                        col = 0;
+                    }
+
+                }
+
+                table.addRow(row);
+            }
+        } catch (BusinessLogicException ex) {
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
         }
 
-        return new HtmlFinder("survey", SurveyFinder.class, valueToShow, 32);
+        form.addRowInOneCell(table);
     }
 
 }

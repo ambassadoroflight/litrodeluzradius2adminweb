@@ -1,14 +1,13 @@
 package org.unlitrodeluzcolombia.radius.element;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 import net.comtor.dao.ComtorJDBCDao;
-import net.comtor.dao.annotations.Cascade;
 import net.comtor.dao.annotations.ComtorDaoFactory;
 import net.comtor.dao.annotations.ComtorElement;
+import net.comtor.dao.annotations.ComtorForeingField;
 import net.comtor.dao.annotations.ComtorId;
-import net.comtor.dao.annotations.ComtorOneToMany;
 import net.comtor.dao.annotations.ComtorSequence;
+import net.comtor.radius.element.Campaign;
 import web.connection.ApplicationDAO;
 
 /**
@@ -27,6 +26,10 @@ public class Survey implements Serializable {
     @ComtorSequence(name = ComtorJDBCDao.MYSQL_SEQUENCE, typeInsert = ComtorSequence.POST_INSERT)
     private long id;
     private String description;
+    private long campaign;
+
+    @ComtorForeingField(referencesClass = Campaign.class, foreingColumn = "description", referencesColumn = "campaign")
+    private String campaign_description;
 
     public Survey() {
     }
@@ -47,11 +50,28 @@ public class Survey implements Serializable {
         this.description = description;
     }
 
+    public long getCampaign() {
+        return campaign;
+    }
+
+    public void setCampaign(long campaign) {
+        this.campaign = campaign;
+    }
+
+    public String getCampaign_description() {
+        return campaign_description;
+    }
+
+    public void setCampaign_description(String campaign_description) {
+        this.campaign_description = campaign_description;
+    }
+
     @Override
     public String toString() {
         return "Survey{"
                 + "id=" + id
                 + ", description=" + description
+                + ", campaign=" + campaign
                 + '}';
     }
 

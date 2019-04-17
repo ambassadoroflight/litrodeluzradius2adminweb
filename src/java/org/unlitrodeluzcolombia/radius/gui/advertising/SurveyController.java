@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.comtor.advanced.administrable.AdministrableForm;
+import net.comtor.advanced.html.HtmlFinder;
 import net.comtor.advanced.html.form.HtmlRadioGroup;
 import net.comtor.dao.ComtorDaoException;
 import net.comtor.exception.BusinessLogicException;
@@ -23,12 +24,15 @@ import net.comtor.html.form.HtmlInputText;
 import net.comtor.html.form.HtmlRadio;
 import net.comtor.html.form.HtmlTextArea;
 import net.comtor.i18n.html.AbstractComtorFacadeAdministratorControllerI18n;
+import net.comtor.radius.element.Campaign;
 import org.unlitrodeluzcolombia.radius.element.Question;
 import org.unlitrodeluzcolombia.radius.element.Survey;
 import org.unlitrodeluzcolombia.radius.enums.QuestionType;
 import org.unlitrodeluzcolombia.radius.facade.QuestionDAOFacade;
 import org.unlitrodeluzcolombia.radius.facade.SurveyDAOFacade;
 import org.unlitrodeluzcolombia.radius.gui.advertising.commons.QuestionFieldGenerator;
+import org.unlitrodeluzcolombia.radius.gui.finder.CampaignFinder;
+import org.unlitrodeluzcolombia.radius.web.facade.CampaignWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.SurveyWebFacade;
 
 /**
@@ -43,6 +47,11 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
 
     @Override
     public String getEntityName() {
+        return "Encuestas";
+    }
+
+    @Override
+    public String getLogModule() {
         return "Encuestas";
     }
 
@@ -62,29 +71,40 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
         HtmlTextArea description = new HtmlTextArea("description", 40, 5, 128);
         description.addAttribute("required", "required");
         form.addField("Descripción", description, null);
+
+        HtmlFinder campaign = getCampaignFinder(survey);
+        form.addField("Campaña Publicitaria", campaign, "Indique a cuál campaña"
+                + " publicitaria pertenece esta encuesta.", true);
+
         form.addSubTitle("Preguntas");
 
         HtmlDiv questions_area = new HtmlDiv("questions_area");
+
         if (survey != null) {
             QuestionDAOFacade daoFacade = new QuestionDAOFacade();
             LinkedList<Question> questions = new LinkedList<>();
+
             try {
                 questions = daoFacade.findAllByProperty("survey", survey.getId());
             } catch (ComtorDaoException ex) {
-                Logger.getLogger(SurveyController.class.getName()).log(Level.SEVERE, null, ex);
+                LOG.log(Level.SEVERE, ex.getMessage(), ex);
             }
 
             QuestionFieldGenerator questionFieldGenerator = new QuestionFieldGenerator();
             questions.forEach((question) -> {
-                questions_area.add(questionFieldGenerator.getQuestionTag(question.getType(), question.getQuestion(), question.getOptions()));
+                questions_area.add(questionFieldGenerator.getQuestionTag(question.getType(),
+                        question.getQuestion(), question.getOptions()));
             });
         }
         form.addRowInOneCell(questions_area);
 
         HtmlContainer container = new HtmlContainer();
-        container.add(getAddQuestionButton("Agregar pregunta abierta", QuestionType.OPEN_QUESTION.toString(), "#D0F5A9"))
-                .add(getAddQuestionButton("Agregar de selección simple", QuestionType.SINGLE.toString(), "#A9E2F3"))
-                .add(getAddQuestionButton("Agregar de selección múltiple", QuestionType.MULTIPLE.toString(), "#D0A9F5"))
+        container.add(getAddQuestionButton("Agregar pregunta abierta",
+                QuestionType.OPEN_QUESTION.toString(), "#D0F5A9"))
+                .add(getAddQuestionButton("Agregar de selección simple",
+                                QuestionType.SINGLE.toString(), "#A9E2F3"))
+                .add(getAddQuestionButton("Agregar de selección múltiple",
+                                QuestionType.MULTIPLE.toString(), "#D0A9F5"))
                 .add(new HtmlHr());
         form.addRowInOneCell(container);
 
@@ -97,30 +117,35 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
         addQuestionButton.addAttribute("style", "color:" + color);
         addQuestionButton.addAttribute("endpoint", "webservices/survey_service/question_tag/" + keyword);
         addQuestionButton.addAttribute("action_type", "append");
+
         return addQuestionButton;
     }
 
     @Override
     public void initFormView(AdministrableForm form, Survey survey) {
         try {
-
             HtmlText field = new HtmlText(survey.getDescription());
             form.addField("Descripción", field, null);
 
+            field = new HtmlText(survey.getCampaign_description());
+            form.addField("Campaña Publicitaria", field, null);
+            
             form.addSubTitle("Preguntas");
 
             LinkedList<Question> questions = new QuestionDAOFacade()
                     .findAllByProperty("survey", survey.getId());
 
-            int i = 1;
+            if (!questions.isEmpty()) {
+                int i = 1;
 
-            for (Question question : questions) {
-                field = new HtmlText(question.getQuestion());
-                form.addField("Pregunta #" + i, field, null);
+                for (Question question : questions) {
+                    field = new HtmlText(question.getQuestion());
+                    form.addField("Pregunta #" + i, field, null);
 
-                form.addField("", getOptionField(question), null);
+                    form.addField("", getOptionField(question), null);
 
-                i++;
+                    i++;
+                }
             }
         } catch (ComtorDaoException ex) {
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
@@ -221,11 +246,6 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
     }
 
     @Override
-    public void addBasicButtons(AdministrableForm form, int action, Survey object) {
-        super.addBasicButtons(form, action, object); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     protected LinkedList<String> getBasicActionLinks(Survey object) {
         LinkedList<String> actions = new LinkedList<>();
 
@@ -252,9 +272,29 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
         try {
             return daoFacade.haveAnswers(survey.getId());
         } catch (ComtorDaoException ex) {
-            Logger.getLogger(SurveyController.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return false;
+    }
+
+    private HtmlFinder getCampaignFinder(Survey zone) {
+        Campaign campaign = null;
+        String valueToShow = "";
+
+        try {
+            campaign = ((zone == null)
+                    ? null
+                    : new CampaignWebFacade().find(zone.getCampaign()));
+            valueToShow = ((campaign == null)
+                    ? ""
+                    : new CampaignFinder().getValueToShow(campaign));
+        } catch (Exception ex) {
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
+
+            return null;
+        }
+
+        return new HtmlFinder("campaign", CampaignFinder.class, valueToShow, 32);
     }
 
 }

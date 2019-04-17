@@ -23,7 +23,7 @@ public class SponsorFinder
 
     @Override
     public String getValueToShow(Sponsor sponsor) {
-        return "[" + sponsor.getId() + "] " + sponsor.getName();
+        return sponsor.getName();
     }
 
     @Override

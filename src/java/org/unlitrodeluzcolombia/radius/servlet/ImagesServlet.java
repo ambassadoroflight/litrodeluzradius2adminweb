@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.comtor.exception.BusinessLogicException;
 import net.comtor.framework.request.validator.RequestBasicValidator;
-import net.comtor.radius.element.AdvertisingCampaign;
-import org.unlitrodeluzcolombia.radius.web.facade.AdvertisingCampaignWebFacade;
+import net.comtor.radius.element.Campaign;
+import org.unlitrodeluzcolombia.radius.web.facade.CampaignWebFacade;
 import web.global.GlobalWeb;
 
 /**
@@ -46,10 +46,10 @@ public class ImagesServlet extends HttpServlet {
             return;
         }
 
-        AdvertisingCampaign campaign = null;
+        Campaign campaign = null;
 
         try {
-            campaign = new AdvertisingCampaignWebFacade().find(id);
+            campaign = new CampaignWebFacade().find(id);
         } catch (BusinessLogicException ex) {
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
         }

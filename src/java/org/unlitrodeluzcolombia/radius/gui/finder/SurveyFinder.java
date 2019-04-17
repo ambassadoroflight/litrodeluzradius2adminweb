@@ -22,7 +22,7 @@ public class SurveyFinder extends AbstractComtorFinderFactoryI18n<Survey, Long> 
 
     @Override
     public String getValueToShow(Survey survey) {
-        return "[" + survey.getId() + "] " + survey.getDescription();
+        return survey.getDescription();
     }
 
     @Override

@@ -13,8 +13,17 @@ import org.unlitrodeluzcolombia.radius.element.Survey;
 public class SurveyDAOFacade extends ComtorDaoElementLogicFacade<Survey, Long> {
 
     public boolean haveAnswers(long surveyId) throws ComtorDaoException {
-        String sql = "select count(an.id) from survey su join question qu on (qu.survey = su.id) join answer an on (an.question = qu.id) where su.id = ?";
+        String sql = "\n"
+                + " SELECT \n"
+                + "     COUNT(an.id) \n"
+                + " FROM \n"
+                + "     survey su \n"
+                + " JOIN question qu    ON (qu.survey = su.id) \n"
+                + " JOIN answer an      ON (an.question = qu.id) \n"
+                + " WHERE \n"
+                + "     su.id = ? \n";
         long numRows = getCountElements(sql, surveyId);
+        
         return numRows > 0;
     }
 

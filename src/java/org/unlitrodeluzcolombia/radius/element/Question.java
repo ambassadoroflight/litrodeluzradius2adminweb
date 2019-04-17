@@ -23,10 +23,10 @@ public class Question implements Serializable {
     @ComtorId
     @ComtorSequence(name = ComtorJDBCDao.MYSQL_SEQUENCE, typeInsert = ComtorSequence.POST_INSERT)
     private long id;
-    private long survey;
     private String type;
     private String question;
     private String options;
+    private long survey;
 
     public Question() {
     }

@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import net.comtor.advanced.administrable.AdministrableForm;
 import net.comtor.exception.BusinessLogicException;
 import net.comtor.framework.logic.facade.WebLogicFacade;
-import net.comtor.html.HtmlText;
 import net.comtor.html.form.HtmlInputText;
 import net.comtor.i18n.html.AbstractComtorFacadeAdministratorControllerI18n;
 import net.comtor.radius.element.Sponsor;
@@ -19,7 +18,8 @@ import web.Images;
  * @since 1.8
  * @version Apr 03, 2019
  */
-public class SponsorController extends AbstractComtorFacadeAdministratorControllerI18n<Sponsor, Long> {
+public class SponsorController
+        extends AbstractComtorFacadeAdministratorControllerI18n<Sponsor, Long> {
 
     private static final Logger LOG = Logger.getLogger(SponsorController.class.getName());
 
@@ -37,15 +37,10 @@ public class SponsorController extends AbstractComtorFacadeAdministratorControll
     public void initForm(AdministrableForm form, Sponsor sponsor)
             throws BusinessLogicException {
         if (sponsor != null) {
-            final long sponsorId = sponsor.getId();
-
-            form.addInputHidden("id", sponsorId);
-
-            HtmlText id = new HtmlText(sponsorId);
-            form.addField("ID", id, null);
+            form.addInputHidden("id", sponsor.getId());
         }
 
-        HtmlInputText name = new HtmlInputText("name", 32, 128);
+        HtmlInputText name = new HtmlInputText("name", 32, 64);
         form.addField("Nombre", name, null, true);
 
         HtmlInputText contact = new HtmlInputText("contact", 32, 64);
@@ -54,7 +49,7 @@ public class SponsorController extends AbstractComtorFacadeAdministratorControll
         HtmlInputText phone = new HtmlInputText("phone", 16, 32);
         form.addField("Teléfono", phone, null);
 
-        HtmlInputText email = new HtmlInputText("email", 32, 128);
+        HtmlInputText email = new HtmlInputText("email", 32, 64);
         form.addField("Correo Electrónico", email, null);
     }
 

@@ -46,12 +46,12 @@ public class PrivilegeProfileAccordionCheck implements HtmlElement {
         div = new HtmlDiv("profileAccordion", "accordion");
 
         try {
-            LinkedList<Privilege> privileges = new PrivilegeWebFacade().findAll();
-            HashMap<String, LinkedList<Privilege>> privilegeGroupMap = getGroupPrivilegeMap(privileges);
+            LinkedList<Privilege> allPrivileges = new PrivilegeWebFacade().findAll();
+            HashMap<String, LinkedList<Privilege>> categoriesMap = getPrivilegeCategoriesMap(allPrivileges);
             int i = 1;
 
-            for (String group : privilegeGroupMap.keySet()) {
-                HtmlH3 sectionTitle = new HtmlH3(group);
+            for (String category : categoriesMap.keySet()) {
+                HtmlH3 sectionTitle = new HtmlH3(category);
                 div.addElement(sectionTitle);
 
                 HtmlDiv sectionBlock = new HtmlDiv("section0" + i, "accordionSections");
@@ -59,7 +59,7 @@ public class PrivilegeProfileAccordionCheck implements HtmlElement {
                 div.addElement(sectionBlock);
                 LinkedList<HtmlCheckbox> checks = new LinkedList<>();
 
-                for (Privilege privilege : privilegeGroupMap.get(group)) {
+                for (Privilege privilege : categoriesMap.get(category)) {
                     checks.add(createHtmlCheckboxText(name, privilege, profile));
                 }
 
@@ -77,20 +77,22 @@ public class PrivilegeProfileAccordionCheck implements HtmlElement {
         }
     }
 
-    private HashMap<String, LinkedList<Privilege>> getGroupPrivilegeMap(LinkedList<Privilege> privileges) {
-        HashMap<String, LinkedList<Privilege>> privilegesGroup = new LinkedHashMap<>();
+    private HashMap<String, LinkedList<Privilege>> getPrivilegeCategoriesMap(LinkedList<Privilege> privileges) {
+        HashMap<String, LinkedList<Privilege>> map = new LinkedHashMap<>();
 
         for (Privilege privilege : privileges) {
-            if (privilegesGroup.containsKey(privilege.getCategory())) {
-                privilegesGroup.get(privilege.getCategory()).add(privilege);
+            String category = privilege.getCategory();
+            
+            if (map.containsKey(category)) {
+                map.get(category).add(privilege);
             } else {
-                LinkedList<Privilege> vector = new LinkedList<>();
-                vector.add(privilege);
-                privilegesGroup.put(privilege.getCategory(), vector);
+                LinkedList<Privilege> list = new LinkedList<>();
+                list.add(privilege);
+                map.put(category, list);
             }
         }
 
-        return privilegesGroup;
+        return map;
     }
 
     private HtmlCheckbox createHtmlCheckboxText(String name, Privilege privilege, Profile profile) {

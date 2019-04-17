@@ -74,21 +74,21 @@ ADD_HAPPY_HOUR,EDIT_HAPPY_HOUR,DELETE_HAPPY_HOUR,VIEW_HAPPY_HOUR,ADD_SPONSOR,EDI
                 description="Patrocinadores" 
                 permission="ADD_SPONSOR,EDIT_SPONSOR,DELETE_SPONSOR,VIEW_SPONSOR"/>   
             
+            <!--Campa&#241;as Publicitarias-->
+            <menuitem 
+                text="Campa&#241;as Publicitarias" 
+                icon="framework/images/icons/bandwidth5_comtoblue_16.png" 
+                url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.advertising.CampaignAdmin" 
+                description="Campa&#241;as Publicitarias" 
+                permission="ADD_SPONSOR,EDIT_SPONSOR,DELETE_SPONSOR,VIEW_SPONSOR"/>  
+            
             <!--Encuestas-->
             <menuitem 
                 text="Encuestas" 
                 icon="framework/images/icons/bandwidth5_comtoblue_16.png" 
                 url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.advertising.SurveyAdmin" 
                 description="Encuestas" 
-                permission="ADD_SPONSOR,EDIT_SPONSOR,DELETE_SPONSOR,VIEW_SPONSOR"/>  
-            
-            <!--Campa&#241;as Publicitarias-->
-            <menuitem 
-                text="Campa&#241;as Publicitarias" 
-                icon="framework/images/icons/bandwidth5_comtoblue_16.png" 
-                url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.advertising.AdvertisingCampaignAdmin" 
-                description="Campa&#241;as Publicitarias" 
-                permission="ADD_SPONSOR,EDIT_SPONSOR,DELETE_SPONSOR,VIEW_SPONSOR"/>  
+                permission="ADD_SPONSOR,EDIT_SPONSOR,DELETE_SPONSOR,VIEW_SPONSOR"/>             
         </menuitem>
                 
         <!--Kioscos-->
@@ -123,7 +123,7 @@ ADD_HAPPY_HOUR,EDIT_HAPPY_HOUR,DELETE_HAPPY_HOUR,VIEW_HAPPY_HOUR,ADD_SPONSOR,EDI
             description="menu.manage.happyhour" 
             permission="ADD_HAPPY_HOUR,EDIT_HAPPY_HOUR,DELETE_HAPPY_HOUR,VIEW_HAPPY_HOUR"/>
     </menuitem>
-    
+       
     <!--Reportes-->
     <menuitem text="menu.report" 
               icon="framework/images/report_white_16.png"

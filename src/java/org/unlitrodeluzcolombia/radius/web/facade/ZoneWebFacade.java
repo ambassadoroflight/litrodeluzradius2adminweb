@@ -21,17 +21,6 @@ public class ZoneWebFacade extends AbstractWebLogicFacade<Zone, Long, ZoneDAOFac
     private static final Logger LOG = Logger.getLogger(ZoneWebFacade.class.getName());
 
     @Override
-    public boolean delete(Long key) throws BusinessLogicException {
-        try {
-            new HotspotWebFacade().deleteHotspotsFromZone(key);
-        } catch (BusinessLogicException ex) {
-            throw ex;
-        }
-
-        return super.delete(key);
-    }
-
-    @Override
     public LinkedList<ObjectValidatorException> validateObjectPreAdd(Zone zone) {
         return validate(zone);
     }
@@ -39,6 +28,26 @@ public class ZoneWebFacade extends AbstractWebLogicFacade<Zone, Long, ZoneDAOFac
     @Override
     public LinkedList<ObjectValidatorException> validateObjectPreEdit(Zone zone) {
         return validate(zone);
+    }
+
+    @Override
+    public LinkedList<ObjectValidatorException> validateObjectPreDelete(Zone zone) {
+        LinkedList<ObjectValidatorException> exceptions = new LinkedList<>();
+
+        // No puedo borrar una zona si tiene hotspots. Primero hay que cambiarles la zona.
+        try {
+            long hotspots = new HotspotWebFacade().getCountByZone(zone.getId());
+
+            if (hotspots > 0) {
+                exceptions.add(new ObjectValidatorException("id", "Hay hotspot "
+                        + "asociados a esta zona. Antes de eliminarla, reasigne "
+                        + "la zona de los hotspots."));
+            }
+        } catch (BusinessLogicException ex) {
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+
+        return exceptions;
     }
 
     private LinkedList<ObjectValidatorException> validate(Zone zone) {
@@ -63,6 +72,14 @@ public class ZoneWebFacade extends AbstractWebLogicFacade<Zone, Long, ZoneDAOFac
         }
 
         return exceptions;
+    }
+
+    public LinkedList<Zone> findAll() throws BusinessLogicException {
+        try {
+            return getDaoFacade().findAll();
+        } catch (ComtorDaoException ex) {
+            throw new BusinessLogicException(ex);
+        }
     }
 
 }

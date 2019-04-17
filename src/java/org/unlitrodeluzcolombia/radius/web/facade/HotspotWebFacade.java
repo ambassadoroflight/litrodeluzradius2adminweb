@@ -77,6 +77,23 @@ public class HotspotWebFacade extends AbstractWebLogicFacade<Hotspot, Long, Hots
         return validate(hotspot);
     }
 
+    public long getCountByZone(long zone) throws BusinessLogicException {
+        try {
+            return getDaoFacade().getCountByZone(zone);
+        } catch (ComtorDaoException ex) {
+            throw new BusinessLogicException(ex);
+        }
+    }
+
+    public LinkedList<Hotspot> findAllByProperty(String property, Object value)
+            throws BusinessLogicException {
+        try {
+            return getDaoFacade().findAllByProperty(property, value);
+        } catch (ComtorDaoException ex) {
+            throw new BusinessLogicException(ex);
+        }
+    }
+
     public void deleteHotspotsFromZone(final long zone) throws BusinessLogicException {
         try {
             getDaoFacade().deleteHotspotsFromZone(zone);
@@ -125,6 +142,11 @@ public class HotspotWebFacade extends AbstractWebLogicFacade<Hotspot, Long, Hots
         } else {
             exceptions.add(new ObjectValidatorException("ip_address",
                     "Debe ingresar la dirección IP del Hotspot."));
+        }
+
+        if (hotspot.getZone() <= 0) {
+            exceptions.add(new ObjectValidatorException("zone",
+                    "Debe indicar a qué zona pertenece el Hotspot."));
         }
 
         return exceptions;

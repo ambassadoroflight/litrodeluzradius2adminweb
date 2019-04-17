@@ -60,7 +60,7 @@ public class HotspotController
         form.addField("Nombre", name, null, true);
 
         HtmlFinder zone = getZoneFinder(hotspot);
-        form.addField("Zona", zone, "Indique la zona a la que pertenece este hotspot, si aplica.");
+        form.addField("Zona", zone, "Indique la zona a la que pertenece este hotspot", true);
 
         HtmlInputText username = new HtmlInputText("username", 32, 64);
         form.addField("Usuario", username, "Indique el usuario de acceso al "

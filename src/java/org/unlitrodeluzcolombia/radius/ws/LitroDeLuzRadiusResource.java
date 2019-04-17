@@ -1,7 +1,6 @@
 package org.unlitrodeluzcolombia.radius.ws;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +24,6 @@ import net.comtor.radius.element.PrepaidCustomer;
 import net.comtor.radius.element.PrepaidRate;
 import net.comtor.radius.element.Seller;
 import net.comtor.radius.element.SellerAuthToken;
-import net.comtor.radius.facade.HappyHourDAOFacade;
 import net.comtor.radius.facade.PrepaidCustmerDAOFacade;
 import net.comtor.radius.facade.PrepaidRateDAOFacade;
 import net.comtor.radius.facade.SellerDAOFacade;
@@ -35,7 +33,6 @@ import org.unlitrodeluzcolombia.radius.web.facade.SellerWebFacade;
 import org.unlitrodeluzcolombia.radius.ws.io.PinSellInput;
 import net.comtor.util.StringUtil;
 import org.json.JSONArray;
-import org.unlitrodeluzcolombia.radius.ws.io.PinInput;
 
 /**
  * REST Web Service
@@ -235,152 +232,46 @@ public class LitroDeLuzRadiusResource {
                     .build();
         }
     }
+    
+    
+        /**
 
-    /**
-     * WS para autenticación del vendedor/gestor.
      *
-     * @param input
+   
      * @return
      */
-    @POST
+   /* @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path(value = "/v1/validar")
-    public Response validatePin(PinInput input) throws BusinessLogicException {
-        final String pin = input.getPin();
-        final long hotspot = input.getHotspot();
+    @Path(value = "/v1/encuesta")
+    public Response processSurvey(PinSellInput soldPin) {
+        String pin = soldPin.getPin();
+        long purchased_time = soldPin.getPurchased_time();
+        String pin_type = soldPin.getPin_type();
+        String seller = soldPin.getSeller();
+        Timestamp creation_date = new Timestamp(soldPin.getCreation_date());
+        String name = soldPin.getCustomer_name();
 
-        if ((input == null) || !StringUtil.isValid(pin)) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Pin no válido.")
-                    .build();
-        }
-
-        if (isHappyHourPin(pin)) {
-            return validateHappyHourPin(pin, hotspot);
-        }
-
-        return validateFullPin(pin, hotspot);
-    }
-
-    private Response validateHappyHourPin(final String pin, final long hotspot) {
-        HappyHour happyHour;
+        PrepaidCustomer prepaidCustomer = new PrepaidCustomer(pin, purchased_time,
+                pin_type, seller);
+        prepaidCustomer.setCreation_date(creation_date);
+        prepaidCustomer.setAttr_1(name);
 
         try {
-            happyHour = new HappyHourDAOFacade().findByPinAndHotspot(pin, hotspot);
+            new PrepaidCustmerDAOFacade().create(prepaidCustomer);
+
+            return Response
+                    .ok(prepaidCustomer)
+                    .build();
         } catch (ComtorDaoException ex) {
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
 
             return Response.serverError()
-                    .entity("Error interno")
+                    .entity(new LoginOutput("Error interno"))
                     .build();
         }
+    }*/
 
-        if (happyHour == null) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Pin hapno válido.")
-                    .build();
-        }
-
-        Calendar calendar = Calendar.getInstance();
-
-        int currentTime = calendar.get(Calendar.HOUR_OF_DAY) * 60
-                + calendar.get(Calendar.MINUTE);
-
-        if (isHappyHourDay(happyHour, calendar)
-                && isHappyHourTime(happyHour, currentTime)) {
-            return Response.ok()
-                    .entity("+OK")
-                    .build();
-        }
-
-        return Response.status(Response.Status.UNAUTHORIZED)
-                .entity("El pin de Happy Hour '" + pin + "' se encuentra fuera de horario")
-                .build();
-    }
-
-    private Response validateFullPin(final String login, long hotspotId) {
-        PrepaidCustomer customer = null;
-
-        try {
-            final PrepaidCustmerDAOFacade facade = new PrepaidCustmerDAOFacade();
-
-            customer = facade.findByProperty("login", login);
-        } catch (Exception ex) {
-            LOG.log(Level.SEVERE, ex.getMessage(), ex);
-
-            return Response.serverError()
-                    .entity("Error interno")
-                    .build();
-        }
-
-        if (customer == null) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Pin full no válido.")
-                    .build();
-        }
-
-        final String pin = customer.getLogin();
-
-        // Valida si el cliente tiene un hotspot asignado.
-        if ((customer.getHotspot_joined() == 1)
-                && (customer.getHotspot() != hotspotId)) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(String.format("El pin '%s' está ligado al Hotspot %d",
-                                    pin, customer.getHotspot()))
-                    .build();
-        }
-
-        // Valida si el pin está inactivo (o sea, ya venció por tiempo).
-        if (!customer.isActive()) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(String.format("El pin '%s' no se encuentra activo.", pin))
-                    .build();
-        }
-
-        // Valida si el pin ya tiene fecha de primer uso.
-        if (customer.getFirst_use_date() == null) {
-            return Response.ok()
-                    .entity("+OK")
-                    .build();
-        } else {
-            long now = System.currentTimeMillis();
-            long time = ((customer.getEnd_session_date().getTime() - now) / 1000);
-
-            // Valida si el pin ya venció por tiempo.
-            if (time <= 0) {
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity(String.format("El tiempo del pin '" + pin + "' se ha agotado.", pin))
-                        .build();
-            }
-
-            return Response.ok()
-                    .entity("+OK")
-                    .build();
-        }
-
-    }
-
-    private boolean isHappyHourPin(final String pin) {
-        return pin.matches("HAP-[A-Z]{3}-[A-Z]{3}");
-    }
-
-    private boolean isHappyHourDay(final HappyHour happyHour, Calendar calendar) {
-        int currentWeekDay = calendar.get(Calendar.DAY_OF_WEEK);
-
-        return (happyHour.isSunday() && (currentWeekDay == 1))
-                || (happyHour.isMonday() && (currentWeekDay == 2))
-                || (happyHour.isTuesday() && (currentWeekDay == 3))
-                || (happyHour.isWednesday() && (currentWeekDay == 4))
-                || (happyHour.isThursday() && (currentWeekDay == 5))
-                || (happyHour.isFriday() && (currentWeekDay == 6))
-                || (happyHour.isSaturday() && (currentWeekDay == 7));
-    }
-
-    private boolean isHappyHourTime(final HappyHour happyHour, final int currentTime) {
-        return (currentTime >= happyHour.getStart_time())
-                && (currentTime <= happyHour.getEnd_time());
-    }
     /*
      private String generateAuthToken(String login) throws ComtorDaoException {
      long now = System.currentTimeMillis();

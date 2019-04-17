@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unlitrodeluzcolombia.radius.gui.advertising.commons;
 
 import net.comtor.html.HtmlBr;
@@ -30,7 +25,9 @@ public class QuestionFieldGenerator {
 
     public HtmlElement getQuestionTag(String questionType, String question, String options) {
 
-        String optionMessage = QuestionType.OPEN_QUESTION.toString().equals(questionType) ? "Seleccione el tipo de campo para la respuesta" : "Opciones (separadas por saltos de linea)";
+        String optionMessage = QuestionType.OPEN_QUESTION.toString().equals(questionType) 
+                ? "Seleccione el tipo de campo para la respuesta" 
+                : "Opciones (separadas por saltos de linea)";
 
         HtmlInputText inputText = new HtmlInputText("question", 32, 512);
         inputText.addAttribute("required", "required");
@@ -42,7 +39,7 @@ public class QuestionFieldGenerator {
         HtmlDiv divForm = new HtmlDiv();
         divForm.setClass("DivFormField");
         divForm.add(new HtmlSpan("question_error"))
-                .add(new HtmlSpan("sp1", "Preguntas"))
+                .add(new HtmlSpan("sp1", "Enunciado"))
                 .add(new HtmlSpan().add(inputText))
                 .add(new HtmlSpan());
 

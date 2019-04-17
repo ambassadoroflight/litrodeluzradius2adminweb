@@ -5,18 +5,17 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.comtor.advanced.administrable.AdministrableForm;
-import net.comtor.advanced.html.HtmlFinder;
 import net.comtor.dao.ComtorDaoException;
 import net.comtor.exception.BusinessLogicException;
 import net.comtor.framework.logic.facade.WebLogicFacade;
 import net.comtor.html.HtmlText;
+import net.comtor.html.HtmlUl;
 import net.comtor.html.form.HtmlInputText;
 import net.comtor.i18n.html.AbstractComtorFacadeAdministratorControllerI18n;
-import net.comtor.radius.element.AdvertisingCampaign;
+import net.comtor.radius.element.Hotspot;
 import net.comtor.radius.element.Zone;
 import net.comtor.radius.facade.HotspotDAOFacade;
-import org.unlitrodeluzcolombia.radius.gui.finder.AdvertisingCampaignFinder;
-import org.unlitrodeluzcolombia.radius.web.facade.AdvertisingCampaignWebFacade;
+import org.unlitrodeluzcolombia.radius.web.facade.HotspotWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.ZoneWebFacade;
 import web.Images;
 
@@ -50,28 +49,35 @@ public class ZoneController
             final long zone_id = zone.getId();
 
             form.addInputHidden("id", zone_id);
-
-            HtmlText id = new HtmlText(zone_id);
-            form.addField("ID", id, null);
         }
 
         HtmlInputText name = new HtmlInputText("name", 32, 64);
         form.addField("Nombre", name, null, true);
-        
-        HtmlFinder advertising_campaign = getCampaignFinder(zone);
-        form.addField("Campaña Publicitaria", advertising_campaign, null);
-        //TODO: AGREGAR HOTSPOTS DESDE ESTRE CRUD?
     }
 
     @Override
     public void initFormView(AdministrableForm form, Zone zone) {
-        HtmlText field = new HtmlText(zone.getId());
-        form.addField("ID", field, null);
+        HtmlText field = new HtmlText(zone.getName());
+        form.addField("Nombre", field, null);
 
-        field = new HtmlText(zone.getName());
-        form.addField("Descripción", field, null);
+        LinkedList<Hotspot> hotspots = new LinkedList<>();
 
-        super.initFormView(form, zone);
+        try {
+            hotspots = new HotspotWebFacade().findAllByProperty("zone", zone.getId());
+        } catch (BusinessLogicException ex) {
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+
+        if (!hotspots.isEmpty()) {
+            HtmlUl list = new HtmlUl();
+
+            for (Hotspot hotspot : hotspots) {
+                list.addElement("[" + hotspot.getCalled_station_id() + "] " + hotspot.getName());
+            }
+
+            form.addField("Hotspots Asociados", list, null);
+        }
+
     }
 
     @Override
@@ -156,8 +162,7 @@ public class ZoneController
     @Override
     public String getConfirmDeleteMessage(Zone zone) {
         return "¿Está seguro que desea eliminar la zona <b>[" + zone.getId()
-                + "] " + zone.getName() + "</b>? Los hotspots pertenecientes "
-                + "quedarán sin una zona asignada.";
+                + "] " + zone.getName() + "</b>?";
     }
 
     @Override
@@ -181,26 +186,6 @@ public class ZoneController
     @Override
     public String getViewPrivilegeMsg() {
         return "Ud. no tiene permisos para ingresar a este módulo.";
-    }
-
-    private HtmlFinder getCampaignFinder(final Zone zone) {
-        AdvertisingCampaign campaign = null;
-        String valueToShow = "";
-
-        try {
-            campaign = ((zone == null)
-                    ? null
-                    : new AdvertisingCampaignWebFacade().find(zone.getAdvertising_campaign()));
-            valueToShow = ((campaign == null)
-                    ? ""
-                    : new AdvertisingCampaignFinder().getValueToShow(campaign));
-        } catch (Exception ex) {
-            LOG.log(Level.SEVERE, ex.getMessage(), ex);
-
-            return null;
-        }
-
-        return new HtmlFinder("advertising_campaign", AdvertisingCampaignFinder.class, valueToShow, 32);
     }
 
 }

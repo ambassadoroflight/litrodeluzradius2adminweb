@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 import net.comtor.exception.BusinessLogicException;
 import net.comtor.framework.error.ObjectValidatorException;
 import net.comtor.framework.logic.facade.AbstractWebLogicFacade;
-import net.comtor.radius.element.AdvertisingCampaign;
-import net.comtor.radius.facade.AdvertisingCampaignDAOFacade;
+import net.comtor.radius.element.Campaign;
+import net.comtor.radius.facade.CampaignDAOFacade;
 import net.comtor.util.StringUtil;
 import web.global.GlobalWeb;
 
@@ -19,12 +19,12 @@ import web.global.GlobalWeb;
  *
  * @author juandiego@comtor.net
  * @since 1.8
- * @version Apr 04, 2019
+ * @version Apr 16, 2019
  */
-public class AdvertisingCampaignWebFacade
-        extends AbstractWebLogicFacade<AdvertisingCampaign, Long, AdvertisingCampaignDAOFacade> {
+public class CampaignWebFacade
+        extends AbstractWebLogicFacade<Campaign, Long, CampaignDAOFacade> {
 
-    private static final Logger LOG = Logger.getLogger(AdvertisingCampaignWebFacade.class.getName());
+    private static final Logger LOG = Logger.getLogger(CampaignWebFacade.class.getName());
 
     private static final String[] VALID_IMAGE_FORMATS = {
         ".png",
@@ -33,102 +33,88 @@ public class AdvertisingCampaignWebFacade
     };
 
     @Override
-    public LinkedList<ObjectValidatorException> validateObjectPreAdd(AdvertisingCampaign campaign) {
+    public LinkedList<ObjectValidatorException> validateObjectPreAdd(Campaign campaign) {
         return validate(campaign);
     }
 
     @Override
-    public LinkedList<ObjectValidatorException> validateObjectPreEdit(AdvertisingCampaign campaign) {
+    public LinkedList<ObjectValidatorException> validateObjectPreEdit(Campaign campaign) {
         return validate(campaign);
     }
 
     @Override
-    public void insert(AdvertisingCampaign ad) throws BusinessLogicException {
+    public void insert(Campaign campaign) throws BusinessLogicException {
         File file1 = getRequest().getMparser().getFile("banner_1_file");
-        String banner1Filename = getBannerName(ad.getSponsor()) + "_horz." + getExtension(file1);
+        String banner1Filename = getBannerName(campaign.getSponsor()) + "_horz."
+                + getExtension(file1);
         File desFile = new File(GlobalWeb.ADS_DIRECTORY + File.separator + banner1Filename);
 
         try {
-            byte[] bytes = Files.readAllBytes(file1.toPath());
-
-            Files.write(desFile.toPath(), bytes);
-
-            if (desFile.exists()) {
-                file1.delete();
-            }
+            writeFile(file1, desFile);
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
         }
 
-        ad.setBanner_1(banner1Filename);
+        campaign.setBanner_1(banner1Filename);
 
         File file2 = getRequest().getMparser().getFile("banner_2_file");
-        String banner2Filename = getBannerName(ad.getSponsor()) + "_vert." + getExtension(file2);
+        String banner2Filename = getBannerName(campaign.getSponsor()) + "_vert."
+                + getExtension(file2);
         File desFile2 = new File(GlobalWeb.ADS_DIRECTORY + File.separator + banner2Filename);
 
         try {
-            byte[] bytes = Files.readAllBytes(file2.toPath());
-
-            Files.write(desFile2.toPath(), bytes);
-
-            if (desFile2.exists()) {
-                file2.delete();
-            }
+            writeFile(file2, desFile2);
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
         }
 
-        ad.setBanner_2(banner2Filename);
+        campaign.setBanner_2(banner2Filename);
 
-        super.insert(ad);
+        super.insert(campaign);
     }
 
-    public File getDirectory(String directoryPath) throws IOException {
-        File directory = new File(directoryPath);
+    @Override
+    public void update(Campaign campaign) throws BusinessLogicException {
+        File file1 = getRequest().getMparser().getFile("banner_1_file");
 
-        if (!directory.exists()) {
-            Files.createDirectories(directory.toPath());
-        }
+        if (file1 != null) {
+            File desFile = new File(GlobalWeb.ADS_DIRECTORY + File.separator 
+                    + campaign.getBanner_1());
 
-        return directory;
-    }
-
-    public boolean uploadFile(String targetPath, String filename, File srcFile)
-            throws IOException {
-        File targetDirectory = getDirectory(targetPath);
-
-        File targetFile = new File(targetDirectory.getPath() + File.separator + filename);
-
-        byte[] bytes = Files.readAllBytes(srcFile.toPath());
-
-        Files.write(targetFile.toPath(), bytes);
-
-        return targetFile.exists();
-    }
-
-    private boolean hasValidFormat(final File file) {
-        for (String format : VALID_IMAGE_FORMATS) {
-            if (file.getName().endsWith(format)) {
-                return true;
+            try {
+                writeFile(file1, desFile);
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
 
-        return false;
+        File file2 = getRequest().getMparser().getFile("banner_2_file");
+
+        if (file2 != null) {
+            File desFile2 = new File(GlobalWeb.ADS_DIRECTORY + File.separator 
+                    + campaign.getBanner_2());
+
+            try {
+                writeFile(file2, desFile2);
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
+
+        super.update(campaign);
     }
 
-    private String getBannerName(long sponsor) {
-        return "sponsor_" + sponsor + "_"
-                + UUID.randomUUID().toString().replace("-", "");
+    private void writeFile(File srcFile, File desFile) throws IOException {
+        byte[] bytes = Files.readAllBytes(srcFile.toPath());
+
+        Files.write(desFile.toPath(), bytes);
+
+        if (desFile.exists()) {
+            srcFile.delete();
+        }
     }
 
-    public static String getExtension(final File file) {
-        final String name = file.getName();
-        final String extension = name.substring(name.lastIndexOf('.') + 1);
-
-        return extension;
-    }
-
-    private LinkedList<ObjectValidatorException> validate(AdvertisingCampaign campaign)
+    private LinkedList<ObjectValidatorException> validate(Campaign campaign)
             throws RuntimeException {
         LinkedList<ObjectValidatorException> exceptions = new LinkedList<>();
 
@@ -150,7 +136,7 @@ public class AdvertisingCampaignWebFacade
                 exceptions.add(new ObjectValidatorException(bannerParam,
                         "Debe subir un archivo."));
             } else {
-                if (file != null && !hasValidFormat(file)) {
+                if ((file != null) && !hasValidFormat(file)) {
                     exceptions.add(new ObjectValidatorException(bannerParam,
                             "Debe subir una imagen en formato <b><i>png o jpeg.</i></b>"));
                 }
@@ -177,5 +163,27 @@ public class AdvertisingCampaignWebFacade
         }
 
         return exceptions;
+    }
+
+    private boolean hasValidFormat(final File file) {
+        for (String format : VALID_IMAGE_FORMATS) {
+            if (file.getName().endsWith(format)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private String getBannerName(long sponsor) {
+        return "sponsor_" + sponsor + "_"
+                + UUID.randomUUID().toString().replace("-", "");
+    }
+
+    private static String getExtension(final File file) {
+        final String name = file.getName();
+        final String extension = name.substring(name.lastIndexOf('.') + 1);
+
+        return extension;
     }
 }
