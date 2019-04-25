@@ -24,11 +24,16 @@ public class Answer implements Serializable {
     @ComtorSequence(name = ComtorJDBCDao.MYSQL_SEQUENCE, typeInsert = ComtorSequence.POST_INSERT)
     private long id;
     private String response;
-    private java.sql.Date answer_ddate;
+    private java.sql.Date answer_date;
     private long question;
     private long hotspot;
 
     public Answer() {
+    }
+
+    public Answer(long hotspot, java.sql.Date answer_date) {
+        this.hotspot = hotspot;
+        this.answer_date = answer_date;
     }
 
     public Answer(long question, String response) {
@@ -60,12 +65,12 @@ public class Answer implements Serializable {
         this.response = response;
     }
 
-    public java.sql.Date getAnswer_ddate() {
-        return answer_ddate;
+    public java.sql.Date getAnswer_date() {
+        return answer_date;
     }
 
-    public void setAnswer_ddate(java.sql.Date answer_ddate) {
-        this.answer_ddate = answer_ddate;
+    public void setAnswer_date(java.sql.Date answer_date) {
+        this.answer_date = answer_date;
     }
 
     public long getHotspot() {

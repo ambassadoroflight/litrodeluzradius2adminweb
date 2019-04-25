@@ -6,3 +6,45 @@
 #campaign_form img {
     max-height: 300px;
 }
+
+.question_box {
+    border: 1px solid black;
+    margin: 1rem;
+    width: 95%;
+    border-radius: 10px;
+    height: 300px;
+}
+
+.question_box_title_panel {
+    background-color: #ff9501;
+    color: white;
+    border-radius: 10px 0 0 10px;
+    border-right: 1px solid black;
+    margin: 0;
+}
+
+.question_box_title_panel span {
+    display: block;
+    font-weight: bolder;
+
+}
+
+.question_box_title_panel span:first-child {
+    margin-top: 35%;
+    font-size: 1.5rem;
+    text-decoration: underline;
+}
+
+.question_box_title_panel span:last-child {
+    font-size: 1.2rem;
+}
+
+.question_box_content_panel {
+    margin: 0;
+    overflow-y: auto;
+    height: 300px;
+}
+
+.chartjs-render-monitor {
+    height: 300px !important;
+}

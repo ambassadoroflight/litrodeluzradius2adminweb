@@ -16,7 +16,7 @@ public class AnswerDAOFacade extends ComtorDaoElementLogicFacade<Answer, Long> {
     public void create(Answer answer) throws ComtorDaoException {
         long now = System.currentTimeMillis();
         
-        answer.setAnswer_ddate(new java.sql.Date(now));
+        answer.setAnswer_date(new java.sql.Date(now));
         
         super.create(answer);
     }

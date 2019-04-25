@@ -102,11 +102,12 @@ public class SurveyWebFacade extends AbstractWebLogicFacade<Survey, Long, Survey
     }
 
     public boolean isEditable(Survey survery) {
-        try {
-            return getDaoFacade().haveAnswers(survery.getId());
+        try {       
+            return getDaoFacade().hasAnswers(survery.getId());
         } catch (ComtorDaoException ex) {
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
         }
+
         return false;
     }
 

@@ -39,7 +39,8 @@
 <html>
     <head>
         <title><%=title%></title>
-        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+        <!--<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">-->
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href='framework/images/favicon.ico' rel="shortcut icon" >
         <comtor:cssmain></comtor:cssmain>
@@ -47,6 +48,7 @@
             <link type="text/css" rel="stylesheet" href="framework/css/radius.css"/>
         <comtor:jsjquery></comtor:jsjquery>
         <comtor:jscomtorframework></comtor:jscomtorframework>
+            <script src="framework/js/chart.js/Chart.bundle.min.js"></script>
         </head>
 
         <body>

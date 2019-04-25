@@ -12,10 +12,10 @@ import org.unlitrodeluzcolombia.radius.element.Survey;
  */
 public class SurveyDAOFacade extends ComtorDaoElementLogicFacade<Survey, Long> {
 
-    public boolean haveAnswers(long surveyId) throws ComtorDaoException {
+    public boolean hasAnswers(long surveyId) throws ComtorDaoException {
         String sql = "\n"
                 + " SELECT \n"
-                + "     COUNT(an.id) \n"
+                + "     an.id \n"
                 + " FROM \n"
                 + "     survey su \n"
                 + " JOIN question qu    ON (qu.survey = su.id) \n"
@@ -23,7 +23,7 @@ public class SurveyDAOFacade extends ComtorDaoElementLogicFacade<Survey, Long> {
                 + " WHERE \n"
                 + "     su.id = ? \n";
         long numRows = getCountElements(sql, surveyId);
-        
+
         return numRows > 0;
     }
 

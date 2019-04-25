@@ -173,8 +173,8 @@ public class ZoneController
 
     @Override
     public String getDeletedMessage(Zone zone) {
-        return "El hotspot <b>[" + zone.getId() + "] " + zone.getName()
-                + "</b> ha sido eliminado.";
+        return "La zona <b>[" + zone.getId() + "] " + zone.getName()
+                + "</b> ha sido eliminada.";
     }
 
     @Override
