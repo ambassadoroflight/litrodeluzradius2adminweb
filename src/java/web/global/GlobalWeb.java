@@ -17,6 +17,8 @@ public class GlobalWeb {
     public static String VERSION = "Versión 0.0.1 [14-Feb-2019]";
     public static final String NAME_CONNECTION = "litrodeluz_radius2";
     public static final ConnectionType CONNECTION_TYPE = ConnectionType.DEVELOPMENT;
+    
+    public static final String W3W_API_KEY = "NEVMR2XP";
 
     public static final String BASE_PATH = File.separator + "opt";
 

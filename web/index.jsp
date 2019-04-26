@@ -98,5 +98,6 @@
         </div>
 
         <comtor:jsprj></comtor:jsprj>
+        <script src="https://assets.what3words.com/sdk/v3/what3words.js?key=<%=GlobalWeb.W3W_API_KEY%>"></script>
     </body>
 </html>

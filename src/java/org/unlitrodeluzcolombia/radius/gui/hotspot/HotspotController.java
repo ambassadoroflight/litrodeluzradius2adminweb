@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.comtor.advanced.administrable.AdministrableForm;
+import net.comtor.advanced.ajax.HtmlJavaScript;
 import net.comtor.advanced.html.HtmlFinder;
+import net.comtor.advanced.html.form.HtmlInputNumber;
 import net.comtor.exception.BusinessLogicException;
 import net.comtor.framework.logic.facade.WebLogicFacade;
 import net.comtor.html.HtmlText;
@@ -17,6 +19,7 @@ import org.unlitrodeluzcolombia.radius.gui.finder.ZoneFinder;
 import org.unlitrodeluzcolombia.radius.web.facade.HotspotWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.ZoneWebFacade;
 import web.Images;
+import web.global.GlobalWeb;
 
 /**
  *
@@ -69,6 +72,17 @@ public class HotspotController
         HtmlInputText password = new HtmlInputText("password", 32, 64);
         form.addField("Contraseña", password, "Indique la contraseña de acceso "
                 + "al Hotspot para configuración.");
+
+        HtmlInputNumber latitude = new HtmlInputNumber("latitude", HtmlInputNumber.Type.DOUBLE);
+        form.addField("Latitud", latitude, null);
+
+        HtmlInputNumber longitude = new HtmlInputNumber("longitude", HtmlInputNumber.Type.DOUBLE);
+        form.addField("Longitud", longitude, null);
+
+        HtmlInputText what3words = new HtmlInputText("what3words");
+        form.addField("What3Words", what3words, null);
+        
+        form.addRowInOneCell(getW3WScript());
     }
 
     @Override
@@ -180,6 +194,64 @@ public class HotspotController
         }
 
         return new HtmlFinder("zone", ZoneFinder.class, valueToShow, 32);
+    }
+
+    private HtmlJavaScript getW3WScript() {
+        String js = ""
+                + " $(document).ready(function() { \n"
+                + "  console.log(\"Prueba What3Words\");\n"
+                + "  \n"
+                + "  var $latInput = $(\"#latitude\");\n"
+                + "  var $lonInput = $(\"#longitude\");\n"
+                + "  var $what3words = $(\"#what3words\");\n"
+                + "  \n"
+                + "  $latInput.keyup(function() {\n"
+                + "    console.log(\"lat\" + $(this).val());\n"
+                + "    \n"
+                + "   getW3W($latInput.val(), $lonInput.val());\n"
+                + "    \n"
+                + "      \n"
+                + "    \n"
+                + "\n"
+                + "  });\n"
+                + "  \n"
+                + "  $lonInput.keyup(function() {\n"
+                + "    console.log(\"long: \" + $(this).val());\n"
+                + "  \n"
+                + " getW3W( $latInput.val(), $lonInput.val());\n"
+                + "    \n"
+                + "       \n"
+                + "    \n"
+                + "\n"
+                + "  }); \n"
+                + "});\n"
+                + "\n"
+                + "function getW3W(x, y) {\n"
+                + "  console.log(\"lat:\" + x + \", long: \" + y);   \n"
+                + "\n"
+                + "                        \n"
+                + "var settings = {\n"
+                + "  \"async\": true,\n"
+                + "  \"crossDomain\": true,\n"
+                + "  \"url\": \"https://api.what3words.com/v3/convert-to-3wa?key=" + GlobalWeb.W3W_API_KEY + "&coordinates=\"+x+\"%2C\"+y+\"&language=es&format=json\",\n"
+                + "  \"method\": \"GET\",\n"
+                + "  \"headers\": {}\n"
+                + "}\n"
+                + "\n"
+                + "$.ajax(settings).done(function (response) {\n"
+                + "   console.log(\"[convertTo3wa]\", response);\n"
+                + "    \n"
+                + " $(\"#what3words\").val(response[\"words\"]);\n"
+                + "});\n"
+                + "                        \n"
+                + "                    \n"
+                + "\n"
+                + "\n"
+                + "  \n"
+                + "  \n"
+                + "}";
+
+        return new HtmlJavaScript(js);
     }
 
 }
