@@ -73,7 +73,7 @@ public class SurveyServices {
                     .status(Response.Status.BAD_REQUEST)
                     .build();
         }
-
+        
         java.sql.Date answerDate = new java.sql.Date(surveyAnswer.getDate().getTime());
         Long hotspot = surveyAnswer.getHotspot();
 

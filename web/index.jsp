@@ -49,6 +49,7 @@
         <comtor:jsjquery></comtor:jsjquery>
         <comtor:jscomtorframework></comtor:jscomtorframework>
             <script src="framework/js/chart.js/Chart.bundle.min.js"></script>
+                        <script type="text/javascript" src="framework/js/gps.js"></script>
         </head>
 
         <body>

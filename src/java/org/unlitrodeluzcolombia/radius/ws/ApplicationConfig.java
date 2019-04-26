@@ -27,6 +27,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(org.unlitrodeluzcolombia.radius.gui.advertising.microservices.SurveyServices.class);        
+        resources.add(org.unlitrodeluzcolombia.radius.gui.hotspot.microservices.HotspotServices.class);
         resources.add(org.unlitrodeluzcolombia.radius.ws.LitroDeLuzRadiusResource.class);
     }
 

@@ -20,7 +20,7 @@ import net.comtor.radius.facade.HotspotDAOFacade;
  * @author juandiego@comtor.net
  * @since Jan 24, 2018
  */
-public class HotspotWebFacade extends AbstractWebLogicFacade<Hotspot, Long, HotspotDAOFacade> {
+public class HotspotWebFacade extends AbstractWebLogicFacade<Hotspot, Long, HotspotDAOFacade> {    
 
     private static final Logger LOG = Logger.getLogger(HotspotWebFacade.class.getName());
 

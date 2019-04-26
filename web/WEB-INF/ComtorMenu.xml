@@ -58,6 +58,15 @@ ADD_HAPPY_HOUR,EDIT_HAPPY_HOUR,DELETE_HAPPY_HOUR,VIEW_HAPPY_HOUR,ADD_SPONSOR,EDI
             description="menu.manage.hotspot" 
             permission="ADD_HOTSPOT,EDIT_HOTSPOT,DELETE_HOTSPOT,VIEW_HOTSPOT"/>        
         
+        
+        <!--Mapa Hotspots-->
+        <menuitem 
+            text="Mapa Hotspots" 
+            icon="framework/images/icons/bandwidth5_comtoblue_16.png" 
+            url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.hotspot.HotspotsMapPage" 
+            description="Mapa Hotspots" 
+            permission="ADD_HOTSPOT,EDIT_HOTSPOT,DELETE_HOTSPOT,VIEW_HOTSPOT"/>      
+        
         <!--Publicidad-->
         <menuitem 
             text="Publicidad" 
@@ -130,7 +139,7 @@ ADD_HAPPY_HOUR,EDIT_HAPPY_HOUR,DELETE_HAPPY_HOUR,VIEW_HAPPY_HOUR,ADD_SPONSOR,EDI
               url="#"
               permission="VIEW_HISTORY_REPORT,VIEW_SOLD_PIN_X_SELLER_REPORT,VIEW_SOLD_PIN_X_KIOSK_REPORT" >
         
-           <!--Resultados por Encuesta-->
+        <!--Resultados por Encuesta-->
         <menuitem 
             text="Resultados por Encuesta" 
             icon="framework/images/report_comtorblue_16.png" 

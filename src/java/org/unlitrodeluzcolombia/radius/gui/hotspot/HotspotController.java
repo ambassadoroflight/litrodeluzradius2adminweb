@@ -10,6 +10,7 @@ import net.comtor.advanced.html.HtmlFinder;
 import net.comtor.advanced.html.form.HtmlInputNumber;
 import net.comtor.exception.BusinessLogicException;
 import net.comtor.framework.logic.facade.WebLogicFacade;
+import net.comtor.html.HtmlIFrame;
 import net.comtor.html.HtmlText;
 import net.comtor.html.form.HtmlInputText;
 import net.comtor.i18n.html.AbstractComtorFacadeAdministratorControllerI18n;
@@ -74,15 +75,44 @@ public class HotspotController
                 + "al Hotspot para configuración.");
 
         HtmlInputNumber latitude = new HtmlInputNumber("latitude", HtmlInputNumber.Type.DOUBLE);
+        latitude.setValue(hotspot == null ? "0" : hotspot.getLatitude() + "");
         form.addField("Latitud", latitude, null);
 
         HtmlInputNumber longitude = new HtmlInputNumber("longitude", HtmlInputNumber.Type.DOUBLE);
+        longitude.setValue(hotspot == null ? "0" : hotspot.getLongitude() + "");
         form.addField("Longitud", longitude, null);
 
-        HtmlInputText what3words = new HtmlInputText("what3words");
-        form.addField("What3Words", what3words, null);
-        
+        HtmlInputText what3words = new HtmlInputText("what3words", true);
+        form.addField("What3Words", what3words, "Estas tres palabras están "
+                + "asociadas a la latitud y longitud.");
+
         form.addRowInOneCell(getW3WScript());
+    }
+
+    @Override
+    public void initFormView(AdministrableForm form, Hotspot hotspot) {
+        HtmlText field;
+
+        field = new HtmlText(hotspot.getCalled_station_id());
+        form.addField("Called Station ID", field, null);
+
+        field = new HtmlText(hotspot.getIp_address());
+        form.addField("Dirección IP", field, null);
+
+        field = new HtmlText(hotspot.getName());
+        form.addField("Nombre", field, null);
+
+        field = new HtmlText(hotspot.getUsername());
+        form.addField("Usuario", field, null);
+
+        field = new HtmlText(hotspot.getLatitude() + ", " + hotspot.getLongitude());
+        form.addField("Coordenadas", field, null);
+
+        field = new HtmlText(hotspot.getWhat3words());
+        form.addField("What3Words", field, null);
+
+        HtmlIFrame map = new HtmlIFrame("w3w_map_frame", "", "https://map.what3words.com/" + hotspot.getWhat3words());
+        form.addRowInOneCell(map);
     }
 
     @Override
@@ -93,6 +123,11 @@ public class HotspotController
     @Override
     public String getEditPrivilege() {
         return "EDIT_HOTSPOT";
+    }
+
+    @Override
+    public String getViewPrivilege() {
+        return "VIEW_HOTSPOT";
     }
 
     @Override
@@ -174,6 +209,11 @@ public class HotspotController
     public String getUpdatedMessage(Hotspot hotspot) {
         return "El hotspot <b>[" + hotspot.getId() + "] " + hotspot.getName()
                 + "</b> ha sido actualizado.";
+    }
+
+    @Override
+    public String getViewPrivilegeMsg() {
+        return "Ud. no tiene permisos para ingresar a este módulo.";
     }
 
     private HtmlFinder getZoneFinder(final Hotspot hotspot) {
