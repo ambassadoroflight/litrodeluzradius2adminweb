@@ -50,7 +50,7 @@
 }
 .map {
     height: 100vh;
-    width: 100%;
+    width: calc(100% - 550px);
     transition: margin-left .5s;
     float: left;
     display: inline-block;
@@ -75,6 +75,17 @@
     transition: 0.5s;
     display: inline-block;
     float: left;
+}
+
+#nav_menu form {
+    width: 100% !important;
+    min-width: initial !important;
+}
+
+#divformrow_sponsor {
+    margin: 0;
+    padding: 0;
+    text-align: initial;
 }
 
 #nav_menu_tab {

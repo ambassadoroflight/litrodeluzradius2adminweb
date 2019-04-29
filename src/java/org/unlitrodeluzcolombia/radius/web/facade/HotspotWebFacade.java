@@ -1,6 +1,7 @@
 package org.unlitrodeluzcolombia.radius.web.facade;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +21,7 @@ import net.comtor.radius.facade.HotspotDAOFacade;
  * @author juandiego@comtor.net
  * @since Jan 24, 2018
  */
-public class HotspotWebFacade extends AbstractWebLogicFacade<Hotspot, Long, HotspotDAOFacade> {    
+public class HotspotWebFacade extends AbstractWebLogicFacade<Hotspot, Long, HotspotDAOFacade> {
 
     private static final Logger LOG = Logger.getLogger(HotspotWebFacade.class.getName());
 
@@ -97,6 +98,16 @@ public class HotspotWebFacade extends AbstractWebLogicFacade<Hotspot, Long, Hots
     public void deleteHotspotsFromZone(final long zone) throws BusinessLogicException {
         try {
             getDaoFacade().deleteHotspotsFromZone(zone);
+        } catch (ComtorDaoException ex) {
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
+
+            throw new BusinessLogicException(ex);
+        }
+    }
+
+    public List<Hotspot> findBySponsor(final Long sponsor) throws BusinessLogicException {
+        try {
+            return getDaoFacade().findBySponsor(sponsor);
         } catch (ComtorDaoException ex) {
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
 

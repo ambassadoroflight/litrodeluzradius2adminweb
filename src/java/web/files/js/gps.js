@@ -61,7 +61,7 @@ function createMarker(map, element, newLatLng, label) {
             type: 'poly'
         }
     });
-    marker.key = element.key;   
+    marker.key = element.key;
     addMarkerInfo(map, marker, element);
 
     if ((label !== null) && (label.trim().length > 0)) {
@@ -104,16 +104,20 @@ function addAjaxMarkerList(map, mapCoordinates, mapMarkers, polyline, url) {
         method: "GET",
         url: url
     }).done(function (data) {
-        if ((polyline !== null) && (polyline.getPath().length > data.length)) {
+        length = data.length;
+        
+        mapCoordinates.clear();
+        
+        mapMarkers.forEach(function (value, key, mapMarkers) {
+            value.setMap(null);
+        });
+        mapMarkers.clear();
+
+        if ((polyline !== null) && (polyline.getPath().length > length)) {
             polyline.getPath().clear();
-            mapCoordinates.clear();
-            mapMarkers.forEach(function (value, key, mapMarkers) {
-                value.setMap(null);
-            });
-            mapMarkers.clear();
         }
 
-        for (var i = 0; i < data.length; i++) {
+        for (var i = 0; i < length; i++) {
             var element = data[i];
             var newLatLng = new google.maps.LatLng(element.latitude, element.longitude);
 
@@ -126,7 +130,7 @@ function addAjaxMarkerList(map, mapCoordinates, mapMarkers, polyline, url) {
                 marker.setPosition(newLatLng);
             }
 
-            if ((polyline !== null) && (i === (data.length - 1))) {
+            if ((polyline !== null) && (i === (length - 1))) {
                 if (!mapMarkers.has(LAST_POSITION)) {
                     element.key = LAST_POSITION;
                     element.event = LAST_POSITION;
@@ -160,7 +164,7 @@ function addAjaxMarkerIntervalWithoutLine(map, mapCoordinates, mapMarkers, url, 
 }
 
 function addMarkerInfo(map, marker, element) {
-    var markerInfo = element.info;   
+    var markerInfo = element.info;
     var infowindow = new google.maps.InfoWindow({
         content: markerInfo
     });
