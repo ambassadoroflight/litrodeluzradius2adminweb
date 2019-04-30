@@ -40,10 +40,11 @@
     <head>
         <title><%=title%></title>
         <!--<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">-->
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href='framework/images/favicon.ico' rel="shortcut icon" >
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="framework/images/favicon.png" rel="shortcut icon" />
         <comtor:cssmain></comtor:cssmain>
+            <link type="text/css" rel="stylesheet" href="framework/css/login.css"/>
             <link type="text/css" rel="stylesheet" href="framework/css/simple-grid.min.css"/>
             <link type="text/css" rel="stylesheet" href="framework/css/radius.css"/>
         <comtor:jsjquery></comtor:jsjquery>
@@ -57,16 +58,12 @@
             <div id="top">
                 <div id ="logo">
                     <a href="index.jsp">
-                        <img src="<%=LitroDeLuzImages.LOGO_LOGIN%>" alt="<comtor:keytranslation key="html.client.logo.alt"></comtor:keytranslation>"/>
+                        <img src="<%=LitroDeLuzImages.LOGO_APP%>" alt="<comtor:keytranslation key="html.client.logo.alt"></comtor:keytranslation>"/>
                         </a>
                     </div>
                     <div id="header">
                         <span id="title"><%=title%></span>
                 </div>
-
-                <div id="comtorlogo">
-                    <img src="<%=Images.COMTOR_LOGO%>" alt="COMTOR LTDA">
-                </div>    
 
                 <div class="menu">
                     <span id="classicMenu">
@@ -86,15 +83,8 @@
         </div>
 
         <div id="footer">
-            <a href="<%=ComtorGlobal.COMTOR_WEBPAGE%>" target="_blank" title="Ir al sitio web de Comtor">
-                <img src="<%=Images.IMG_LOGO_COMTOR_WORD%>" alt="Comtor Ltda" />
-            </a>
-
-            <span id="disclaimer">
-                <span class="disclaimerText">COMTOR LTDA. - TODOS LOS DERECHOS RESERVADOS © <%=ComtorGlobal.CURRENT_YEAR%></span>
-                <span class="disclaimerText"><a href="<%=ComtorGlobal.COMTOR_MAP_LINK%>" target="_blank" id="mapLink"><%=ComtorGlobal.COMTOR_ADDRESS%></a></span>
-                <span class="disclaimerText">Tels: <%=ComtorGlobal.printPhones()%></span>
-                <span class="disclaimerText"><a href="mailto:<%=ComtorGlobal.COMTOR_EMAIL%>"><%=ComtorGlobal.COMTOR_EMAIL%></a></span>
+            <span id="disclaimer">               
+                <span class="disclaimerText">© <i>Linternet</i> por <a href="http://inlitrodeluzcolombia.org"> Litro de Luz Colombia</a> - <%=ComtorGlobal.CURRENT_YEAR%></span>
             </span>
         </div>
 

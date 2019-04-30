@@ -300,6 +300,12 @@ CREATE TABLE survey (
     FOREIGN KEY (campaign) REFERENCES campaign (id) ON DELETE CASCADE
 );
 
+INSERT INTO 
+    privilege (code, description, category)
+VALUES
+    ('VIEW_SURVEY_REPORT', 'Ver reporte de resultados de encuestas', 'Reportes');
+
+
 -- -----------------------------------------------------------------------------
 -- Tabla question
 -- -----------------------------------------------------------------------------

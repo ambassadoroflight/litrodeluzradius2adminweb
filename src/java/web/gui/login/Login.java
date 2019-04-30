@@ -61,10 +61,6 @@ public class Login extends LoginFactory2 {
         submitButton.addAttribute("tabindex", "3");
         form.addElement(submitButton);
 
-        HtmlImg poweredImg = new HtmlImg(Images.IMG_POWERED_BY);
-        poweredImg.addAttribute("id", "poweredImg");
-        form.addElement(poweredImg);
-
         form.addInputHidden("option", getClass().getCanonicalName());
         form.addRowInOneCell(getJS());
 

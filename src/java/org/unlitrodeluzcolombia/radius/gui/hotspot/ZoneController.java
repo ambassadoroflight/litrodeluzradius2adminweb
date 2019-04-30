@@ -8,6 +8,7 @@ import net.comtor.advanced.administrable.AdministrableForm;
 import net.comtor.dao.ComtorDaoException;
 import net.comtor.exception.BusinessLogicException;
 import net.comtor.framework.logic.facade.WebLogicFacade;
+import net.comtor.html.HtmlLi;
 import net.comtor.html.HtmlText;
 import net.comtor.html.HtmlUl;
 import net.comtor.html.form.HtmlInputText;
@@ -72,7 +73,7 @@ public class ZoneController
             HtmlUl list = new HtmlUl();
 
             for (Hotspot hotspot : hotspots) {
-                list.addElement("[" + hotspot.getCalled_station_id() + "] " + hotspot.getName());
+                list.addListElement("[" + hotspot.getCalled_station_id() + "] " + hotspot.getName());
             }
 
             form.addField("Hotspots Asociados", list, null);
