@@ -19,8 +19,8 @@ import net.comtor.radius.element.Zone;
 import org.unlitrodeluzcolombia.radius.gui.finder.ZoneFinder;
 import org.unlitrodeluzcolombia.radius.web.facade.HotspotWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.ZoneWebFacade;
-import web.Images;
 import web.global.GlobalWeb;
+import web.global.LitroDeLuzImages;
 
 /**
  *
@@ -164,7 +164,7 @@ public class HotspotController
 
     @Override
     protected String getTitleImgPath() {
-        return Images.HOTSPOTS_WHITE_32;
+        return LitroDeLuzImages.HOTSPOT_CONTROLLER;
     }
 
     @Override

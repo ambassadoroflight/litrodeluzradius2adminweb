@@ -20,6 +20,7 @@ import net.comtor.radius.element.Sponsor;
 import net.comtor.radius.facade.HotspotDAOFacade;
 import net.comtor.radius.facade.SponsorDAOFacade;
 import web.global.GlobalWeb;
+import web.global.LitroDeLuzImages;
 
 /**
  *
@@ -41,7 +42,8 @@ public class HotspotsMapPage extends HtmlGuiInterface {
     public String getHtml() {
         HtmlContainer mainContainer = new HtmlContainer();
 
-        HtmlDiv controller_title = new HtmlDiv(null, "controller_title", new HtmlImg(""));
+        HtmlDiv controller_title = new HtmlDiv(null, "controller_title", 
+                new HtmlImg(LitroDeLuzImages.MAP_CONTROLLER));
         controller_title.addString(TITLE);
 
         mainContainer.addElement(controller_title);

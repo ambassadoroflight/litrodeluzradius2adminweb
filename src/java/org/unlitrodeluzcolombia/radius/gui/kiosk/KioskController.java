@@ -9,14 +9,13 @@ import net.comtor.advanced.administrable.AdministrableForm;
 import net.comtor.advanced.html.HtmlFinder;
 import net.comtor.exception.BusinessLogicException;
 import net.comtor.framework.logic.facade.WebLogicFacade;
-import net.comtor.html.HtmlText;
 import net.comtor.html.form.HtmlInputText;
 import net.comtor.i18n.html.AbstractComtorFacadeAdministratorControllerI18n;
 import net.comtor.radius.element.Hotspot;
 import org.unlitrodeluzcolombia.radius.gui.finder.HotspotFinder;
 import org.unlitrodeluzcolombia.radius.web.facade.HotspotWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.KioskWebFacade;
-import web.Images;
+import web.global.LitroDeLuzImages;
 
 /**
  *
@@ -42,12 +41,7 @@ public class KioskController
     public void initForm(AdministrableForm form, Kiosk kiosk)
             throws BusinessLogicException {
         if (kiosk != null) {
-            final long kiosk_id = kiosk.getId();
-
-            form.addInputHidden("id", kiosk_id);
-
-            HtmlText id = new HtmlText(kiosk_id);
-            form.addField("ID", id, null);
+            form.addInputHidden("id", kiosk.getId());
         }
 
         HtmlInputText nit = new HtmlInputText("nit", 32, 64);
@@ -118,7 +112,7 @@ public class KioskController
 
     @Override
     protected String getTitleImgPath() {
-        return Images.KIOSK_WHITE_32;
+        return LitroDeLuzImages.SELLER_CONTROLLER;
     }
 
     @Override

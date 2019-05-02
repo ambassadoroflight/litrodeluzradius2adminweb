@@ -3,6 +3,7 @@ package org.unlitrodeluzcolombia.radius.gui.advertising;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +26,6 @@ import net.comtor.html.HtmlContainer;
 import net.comtor.html.HtmlDiv;
 import net.comtor.html.HtmlElement;
 import net.comtor.html.HtmlHr;
-import net.comtor.html.HtmlLi;
 import net.comtor.html.HtmlText;
 import net.comtor.html.HtmlUl;
 import net.comtor.html.form.HtmlButton;
@@ -53,6 +53,7 @@ import org.unlitrodeluzcolombia.radius.gui.advertising.commons.QuestionFieldGene
 import org.unlitrodeluzcolombia.radius.gui.finder.CampaignFinder;
 import org.unlitrodeluzcolombia.radius.web.facade.CampaignWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.SurveyWebFacade;
+import web.global.LitroDeLuzImages;
 import web.gui.SurveyQuestionBox;
 
 /**
@@ -82,7 +83,6 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
 
     @Override
     public void initForm(AdministrableForm form, Survey survey) throws BusinessLogicException {
-
         if (survey != null) {
             long surveyId = survey.getId();
             form.addInputHidden("id", surveyId);
@@ -96,16 +96,15 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
         form.addField("Campaña Publicitaria", campaign, "Indique a cuál campaña"
                 + " publicitaria pertenece esta encuesta.", true);
 
-        form.addSubTitle("Preguntas");
+        form.addSubTitle("Agregar Preguntas");
 
         HtmlDiv questions_area = new HtmlDiv("questions_area");
 
         if (survey != null) {
-            QuestionDAOFacade daoFacade = new QuestionDAOFacade();
-            LinkedList<Question> questions = new LinkedList<>();
+            List<Question> questions = new LinkedList<>();
 
             try {
-                questions = daoFacade.findAllByProperty("survey", survey.getId());
+                questions = new QuestionDAOFacade().findAllByProperty("survey", survey.getId());
             } catch (ComtorDaoException ex) {
                 LOG.log(Level.SEVERE, ex.getMessage(), ex);
             }
@@ -116,29 +115,19 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
                         question.getQuestion(), question.getOptions()));
             });
         }
+
         form.addRowInOneCell(questions_area);
 
         HtmlContainer container = new HtmlContainer();
         container.add(getAddQuestionButton("Agregar pregunta abierta",
-                QuestionType.OPEN_QUESTION.toString(), "#D0F5A9"))
+                QuestionType.OPEN_QUESTION.toString(), "#FFFFFF"))
                 .add(getAddQuestionButton("Agregar de selección simple",
-                                QuestionType.SINGLE.toString(), "#A9E2F3"))
+                                QuestionType.SINGLE.toString(), "#FFFFFF"))
                 .add(getAddQuestionButton("Agregar de selección múltiple",
-                                QuestionType.MULTIPLE.toString(), "#D0A9F5"))
+                                QuestionType.MULTIPLE.toString(), "#FFFFFF"))
                 .add(new HtmlHr());
         form.addRowInOneCell(container);
 
-    }
-
-    private HtmlButton getAddQuestionButton(String title, String keyword, String color) {
-        HtmlButton addQuestionButton = new HtmlButton(HtmlButton.SCRIPT_BUTTON, "add_question", title);
-        addQuestionButton.addAttribute("class", "ajaxGet");
-        addQuestionButton.addAttribute("title", title);
-        addQuestionButton.addAttribute("style", "color:" + color);
-        addQuestionButton.addAttribute("endpoint", "webservices/survey_service/question_tag/" + keyword);
-        addQuestionButton.addAttribute("action_type", "append");
-
-        return addQuestionButton;
     }
 
     @Override
@@ -170,52 +159,6 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
         } catch (ComtorDaoException ex) {
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
         }
-
-    }
-
-    public HtmlElement getOptionField(Question question) {
-        if (question.getType().equals(QuestionType.OPEN_QUESTION.toString())) {
-
-            switch (question.getOptions()) {
-                case "text":
-                    HtmlInputText inputText = new HtmlInputText("options");
-                    inputText.setReadOnly(false);
-                    return inputText;
-                case "phone":
-                    HtmlInput inputPhone = new HtmlInput("phone", "options", "");
-                    inputPhone.setReadOnly(false);
-                    return inputPhone;
-                case "date":
-                    HtmlInput inputDate = new HtmlInput("date", "options", "");
-                    inputDate.setReadOnly(false);
-                    inputDate.addAttribute("pattern", "[0-9]{4}-[0-9]{2}-[0-9]{2}");
-                    return inputDate;
-                case "email":
-                    HtmlInput inputEmail = new HtmlInput("email", "options", "");
-                    inputEmail.setReadOnly(false);
-                    return inputEmail;
-                case "number":
-                    HtmlInput inputNumber = new HtmlInput("number", "options", "");
-                    inputNumber.setReadOnly(false);
-                    return inputNumber;
-            }
-        }
-
-        if (question.getType().equals(QuestionType.SINGLE.toString())) {
-            HtmlRadioGroup options = new HtmlRadioGroup();
-            for (String option : question.getOptionsArray()) {
-                options.addElement(new HtmlRadio("options", option, option));
-                options.addElement(new HtmlBr());
-            }
-            return options;
-        }
-
-        HtmlContainer container = new HtmlContainer();
-        for (String option : question.getOptionsArray()) {
-            container.addElement(new HtmlCheckbox("options", option, option));
-            container.addElement(new HtmlBr());
-        }
-        return container;
 
     }
 
@@ -258,6 +201,50 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
         row.add(survey.getDescription());
 
         return row;
+    }
+
+    @Override
+    protected String getTitleImgPath() {
+        return LitroDeLuzImages.ADVERTISING_CONTROLLER;
+    }
+
+    @Override
+    public String getAddFormLabel() {
+        return "Nueva Encuesta";
+    }
+
+    @Override
+    public String getAddNewObjectLabel() {
+        return "Crear Encuesta";
+    }
+
+    @Override
+    public String getEditFormLabel() {
+        return "Editar Encuesta";
+    }
+
+    @Override
+    public String getConfirmDeleteMessage(Survey survey) {
+        return "¿Está seguro que desea eliminar la encuesta <b>[" + survey.getId()
+                + "] " + survey.getDescription() + "</b>?";
+    }
+
+    @Override
+    public String getAddedMessage(Survey survey) {
+        return "La encuesta <b>[" + survey.getId() + "] " + survey.getDescription()
+                + "</b> ha sido creada.";
+    }
+
+    @Override
+    public String getDeletedMessage(Survey survey) {
+        return "La encuesta <b>[" + survey.getId() + "] " + survey.getDescription()
+                + "</b> ha sido eliminada.";
+    }
+
+    @Override
+    public String getUpdatedMessage(Survey survey) {
+        return "La encuesta <b>[" + survey.getId() + "] " + survey.getDescription()
+                + "</b> ha sido actualizada.";
     }
 
     @Override
@@ -356,9 +343,69 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
                     getBaseUrl(), ex, true, request);
         }
 
-        addBasicButtons(form, AdministrableForm.ADD_FORM, null);
-
+        form.addButton("cancel", "Regresar");
+        
         return form;
+    }
+
+    private HtmlButton getAddQuestionButton(String title, String keyword, String color) {
+        HtmlButton addQuestionButton = new HtmlButton(HtmlButton.SCRIPT_BUTTON, "add_question", title);
+        addQuestionButton.addAttribute("class", "ajaxGet");
+        addQuestionButton.addAttribute("title", title);
+        addQuestionButton.addAttribute("style", "color:" + color);
+        addQuestionButton.addAttribute("endpoint", "webservices/survey_service/question_tag/" + keyword);
+        addQuestionButton.addAttribute("action_type", "append");
+
+        return addQuestionButton;
+    }
+
+    private HtmlElement getOptionField(Question question) {
+        if (question.getType().equals(QuestionType.OPEN_QUESTION.toString())) {
+
+            switch (question.getOptions()) {
+                case "text":
+                    HtmlInputText inputText = new HtmlInputText("options");
+                    inputText.setReadOnly(false);
+                    return inputText;
+                case "phone":
+                    HtmlInput inputPhone = new HtmlInput("phone", "options", "");
+                    inputPhone.setReadOnly(false);
+                    return inputPhone;
+                case "date":
+                    HtmlInput inputDate = new HtmlInput("date", "options", "");
+                    inputDate.setReadOnly(false);
+                    inputDate.addAttribute("pattern", "[0-9]{4}-[0-9]{2}-[0-9]{2}");
+                    return inputDate;
+                case "email":
+                    HtmlInput inputEmail = new HtmlInput("email", "options", "");
+                    inputEmail.setReadOnly(false);
+                    return inputEmail;
+                case "number":
+                    HtmlInput inputNumber = new HtmlInput("number", "options", "");
+                    inputNumber.setReadOnly(false);
+                    return inputNumber;
+            }
+        }
+
+        if (question.getType().equals(QuestionType.SINGLE.toString())) {
+            HtmlRadioGroup options = new HtmlRadioGroup();
+
+            for (String option : question.getOptionsArray()) {
+                options.addElement(new HtmlRadio("options", option, option));
+                options.addElement(new HtmlBr());
+            }
+
+            return options;
+        }
+
+        HtmlContainer container = new HtmlContainer();
+
+        for (String option : question.getOptionsArray()) {
+            container.addElement(new HtmlCheckbox("options", option, option));
+            container.addElement(new HtmlBr());
+        }
+
+        return container;
     }
 
     private HtmlFinder getCampaignFinder(Survey zone) {
@@ -404,14 +451,10 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
         HtmlUl list = new HtmlUl();
 
         for (Answer answer : answers) {
-            HtmlLi li = new HtmlLi();
-            li.addString(answer.getResponse());
-
-            list.addElement(li);
+            list.addListElement(answer.getResponse());
         }
 
         return list;
-
     }
 
     private HtmlDiv getPieChart(final LinkedList<Answer> answers,

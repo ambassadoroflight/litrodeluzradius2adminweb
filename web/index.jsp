@@ -44,21 +44,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="framework/images/favicon.png" rel="shortcut icon" />
         <comtor:cssmain></comtor:cssmain>
-            <link type="text/css" rel="stylesheet" href="framework/css/login.css"/>
-            <link type="text/css" rel="stylesheet" href="framework/css/simple-grid.min.css"/>
-            <link type="text/css" rel="stylesheet" href="framework/css/radius.css"/>
+        <link type="text/css" rel="stylesheet" href="framework/css/login.css"/>
+        <link type="text/css" rel="stylesheet" href="framework/css/simple-grid.min.css"/>
+        <link type="text/css" rel="stylesheet" href="framework/css/radius.css"/>
         <comtor:jsjquery></comtor:jsjquery>
         <comtor:jscomtorframework></comtor:jscomtorframework>
-            <script src="framework/js/chart.js/Chart.bundle.min.js"></script>
-                        <script type="text/javascript" src="framework/js/gps.js"></script>
-        </head>
+        <script type="text/javascript" src="framework/js/gps.js"></script>
+        <script type="text/javascript" src="framework/js/chart.js/Chart.bundle.min.js"></script> 
+    </head>
 
         <body>
         <comtor:ifsessionexists>
             <div id="top">
                 <div id ="logo">
                     <a href="index.jsp">
-                        <img src="<%=LitroDeLuzImages.LOGO_APP%>" alt="<comtor:keytranslation key="html.client.logo.alt"></comtor:keytranslation>"/>
+                        <img src="<%=LitroDeLuzImages.RADIUS_LOGO_APP%>" alt="<comtor:keytranslation key="html.client.logo.alt"></comtor:keytranslation>"/>
                         </a>
                     </div>
                     <div id="header">
@@ -84,11 +84,11 @@
 
         <div id="footer">
             <span id="disclaimer">               
-                <span class="disclaimerText">© <i>Linternet</i> por <a href="http://inlitrodeluzcolombia.org"> Litro de Luz Colombia</a> - <%=ComtorGlobal.CURRENT_YEAR%></span>
+                <span class="disclaimerText">© <a href="http://inlitrodeluzcolombia.org"> Litro de Luz Colombia</a> - <%=ComtorGlobal.CURRENT_YEAR%></span>
             </span>
         </div>
 
-        <comtor:jsprj></comtor:jsprj>
-        <script src="https://assets.what3words.com/sdk/v3/what3words.js?key=<%=GlobalWeb.W3W_API_KEY%>"></script>
+        <comtor:jsprj></comtor:jsprj>               
+        <script type="text/javascript" src="https://assets.what3words.com/sdk/v3/what3words.js?key=<%=GlobalWeb.W3W_API_KEY%>"></script>
     </body>
 </html>

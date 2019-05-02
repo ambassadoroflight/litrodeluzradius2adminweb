@@ -10,7 +10,7 @@ import net.comtor.html.form.HtmlInputText;
 import net.comtor.i18n.html.AbstractComtorFacadeAdministratorControllerI18n;
 import net.comtor.radius.element.Sponsor;
 import org.unlitrodeluzcolombia.radius.web.facade.SponsorWebFacade;
-import web.Images;
+import web.global.LitroDeLuzImages;
 
 /**
  *
@@ -99,7 +99,7 @@ public class SponsorController
 
     @Override
     protected String getTitleImgPath() {
-        return Images.HOTSPOTS_WHITE_32;
+        return LitroDeLuzImages.ADVERTISING_CONTROLLER;
     }
 
     @Override

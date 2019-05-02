@@ -32,7 +32,7 @@ import org.unlitrodeluzcolombia.radius.gui.finder.SponsorFinder;
 import org.unlitrodeluzcolombia.radius.web.facade.CampaignWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.SponsorWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.ZoneWebFacade;
-import web.Images;
+import web.global.LitroDeLuzImages;
 
 /**
  *
@@ -143,10 +143,10 @@ public class CampaignController
 
                 for (Long id : zonesIds) {
                     zone = zoneFacade.find(id);
-                    
+
                     item = new HtmlLi();
                     item.addElement(zone.getName());
-                    
+
                     list.addElement(item);
                 }
 
@@ -213,7 +213,7 @@ public class CampaignController
 
     @Override
     protected String getTitleImgPath() {
-        return Images.HOTSPOTS_WHITE_32;
+        return LitroDeLuzImages.ADVERTISING_CONTROLLER;
     }
 
     @Override
@@ -325,9 +325,10 @@ public class CampaignController
                 int col = 0;
 
                 LinkedList<Object> row = new LinkedList<>();
+                HtmlCheckbox checkbok;
 
                 for (Zone zone : allZones) {
-                    HtmlCheckbox checkbok = new HtmlCheckbox("zones", "" + zone.getId(),
+                    checkbok = new HtmlCheckbox("zones", "" + zone.getId(),
                             zone.getName());
 
                     if (campaign != null) {

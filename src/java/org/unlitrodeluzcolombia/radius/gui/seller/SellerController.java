@@ -20,6 +20,7 @@ import net.comtor.radius.element.Kiosk;
 import org.unlitrodeluzcolombia.radius.web.facade.KioskWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.SellerWebFacade;
 import web.Images;
+import web.global.LitroDeLuzImages;
 
 /**
  *
@@ -33,7 +34,7 @@ public class SellerController
 
     @Override
     public String getEntityName() {
-        return "Vendedores/Gestores";
+        return "Gestores";
     }
 
     @Override
@@ -46,7 +47,7 @@ public class SellerController
         if (seller == null) {
             HtmlInputText login = new HtmlInputText("login", 32, 64);
             form.addField("Usuario", login, "Indique el nombre de "
-                    + "usuario con el cual el vendedor ingresará a la plataforma "
+                    + "usuario con el cual el gestor ingresará a la plataforma "
                     + "de venta de pines.", true);
         } else {
             final String seller_login = seller.getLogin();
@@ -59,7 +60,7 @@ public class SellerController
 
         HtmlInputPassword password = new HtmlInputPassword("password", 32, 128);
         form.addField("Contraseña", password, "Ingrese la contraseña con el cual "
-                + "el vendedor ingresará a la plataforma de venta de pines.", true);
+                + "el gestor ingresará a la plataforma de venta de pines.", true);
 
         HtmlInputPassword confirm_password = new HtmlInputPassword("confirm_password", 32, 128);
         form.addField("Confirmar Contraseña", confirm_password, null, true);
@@ -83,7 +84,7 @@ public class SellerController
         form.addField("Kiosco", kiosk, null, true);
 
         HtmlCheckbox active = new HtmlCheckbox("active", "active");
-        form.addField("Activo", active, "Si marca la casilla, el vendedor estará "
+        form.addField("Activo", active, "Si marca la casilla, el gestor estará "
                 + "activo para ingresar a la plataforma de venta de pines.");
     }
 
@@ -142,50 +143,50 @@ public class SellerController
 
     @Override
     protected String getTitleImgPath() {
-        return Images.SELLERS_WHITE_32;
+        return LitroDeLuzImages.SELLER_CONTROLLER;
     }
 
     @Override
     public String getLogModule() {
-        return "Vendedores/Gestores";
+        return "Gestores";
     }
 
     @Override
     public String getAddFormLabel() {
-        return "Nueva Vendedor";
+        return "Nuevo Gestor";
     }
 
     @Override
     public String getAddNewObjectLabel() {
-        return "Crear Vendedor";
+        return "Crear Gestor";
     }
 
     @Override
     public String getEditFormLabel() {
-        return "Editar Vendedor";
+        return "Editar Gestor";
     }
 
     @Override
     public String getConfirmDeleteMessage(Seller seller) {
-        return "¿Está seguro que desea eliminar al vendedor <b>[" + seller.getLogin()
+        return "¿Está seguro que desea eliminar al gestor <b>[" + seller.getLogin()
                 + "] " + seller.getName() + "</b>?";
     }
 
     @Override
     public String getAddedMessage(Seller seller) {
-        return "El vendedor <b>[" + seller.getLogin() + "] " + seller.getName()
+        return "El gestor <b>[" + seller.getLogin() + "] " + seller.getName()
                 + "</b> ha sido creado.";
     }
 
     @Override
     public String getDeletedMessage(Seller seller) {
-        return "El vendedor <b>[" + seller.getLogin() + "] " + seller.getName()
+        return "El gestor <b>[" + seller.getLogin() + "] " + seller.getName()
                 + "</b> ha sido eliminado.";
     }
 
     @Override
     public String getUpdatedMessage(Seller seller) {
-        return "El vendedor <b>[" + seller.getLogin() + "] " + seller.getName()
+        return "El gestor <b>[" + seller.getLogin() + "] " + seller.getName()
                 + "</b> ha sido actualizado.";
     }
 

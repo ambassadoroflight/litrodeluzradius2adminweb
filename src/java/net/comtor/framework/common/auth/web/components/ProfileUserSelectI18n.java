@@ -175,6 +175,7 @@ public class ProfileUserSelectI18n implements HtmlFormElement, HtmlElement {
         selected.addAttribute("multiple", null);
 
         table = new HtmlTable();
+        table.addAttribute("id", "profile-selector");
         table.addCell(new HtmlText("<b>" + getLabelAvailable() + "</b>", false),
                 HtmlTd.ALIGN_CENTER);
         table.addCell(new HtmlText(""));

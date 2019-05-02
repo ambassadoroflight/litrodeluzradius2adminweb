@@ -5,7 +5,6 @@ import net.comtor.framework.common.auth.DefaultComtorAAA;
 import net.comtor.aaa.pagefactory.LoginFactory2;
 import net.comtor.advanced.administrable.AdministrableForm;
 import net.comtor.advanced.ajax.HtmlJavaScript;
-import net.comtor.framework.images.Images;
 import net.comtor.html.HtmlImg;
 import net.comtor.html.form.HtmlButton;
 import net.comtor.html.form.HtmlInputPassword;
@@ -38,7 +37,7 @@ public class Login extends LoginFactory2 {
         form.setTitle(getTitle());
         form.addAttribute("id", "loginForm");
 
-        HtmlImg logo = new HtmlImg(LitroDeLuzImages.LOGO_LOGIN);
+        HtmlImg logo = new HtmlImg(LitroDeLuzImages.RADIUS_LOGO_LOGIN);
         logo.addAttribute("id", "logoLogin");
         form.addElement(logo);
 

@@ -102,41 +102,42 @@ ADD_HAPPY_HOUR,EDIT_HAPPY_HOUR,DELETE_HAPPY_HOUR,VIEW_HAPPY_HOUR,ADD_SPONSOR,EDI
                 
         <!--Kioscos-->
         <menuitem 
-            text="menu.manage.kiosk" 
+            text="Kioscos" 
             icon="framework/images/icons/menu/kiosk-submenu.png" 
             url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.kiosk.KioskAdmin" 
-            description="menu.manage.kiosk" 
+            description="Kioscos" 
             permission="ADD_KIOSK,EDIT_KIOSK,DELETE_KIOSK,VIEW_KIOSK"/>
 
         <!--Vendedor/Gestor-->
         <menuitem 
-            text="menu.manage.seller" 
+            text="Gestores" 
             icon="framework/images/icons/menu/seller-submenu.png" 
             url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.seller.SellerAdmin" 
-            description="menu.manage.seller" 
+            description="Gestores" 
             permission="ADD_SELLER,EDIT_SELLER,DELETE_SELLER,VIEW_SELLER"/>
         
         <!--Tarifas-->
         <menuitem 
-            text="Tarifa" 
+            text="Tarifas" 
             icon="framework/images/icons/menu/rate-submenu.png" 
             url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.rate.PrepaidRateAdmin" 
-            description="Tarifa" 
+            description="Tarifas" 
             permission="ADD_PREPAID_RATE,EDIT_PREPAID_RATE,DELETE_PREPAID_RATE,VIEW_PREPAID_RATE"/>
        
         <!--Hora Libre-->
         <menuitem 
-            text="menu.manage.happyhour" 
+            text="Pin Happy Hour" 
             icon="framework/images/icons/menu/happyhour-submenu.png" 
             url="index.jsp?option=org.unlitrodeluzcolombia.radius.gui.happyhour.HappyHourAdmin"
-            description="menu.manage.happyhour" 
+            description="Pin Happy Hour" 
             permission="ADD_HAPPY_HOUR,EDIT_HAPPY_HOUR,DELETE_HAPPY_HOUR,VIEW_HAPPY_HOUR"/>
     </menuitem>
        
     <!--Reportes-->
-    <menuitem text="menu.report" 
+    <menuitem text="Reportes" 
               icon="framework/images/report_white_16.png"
               url="#"
+              description="Reportes"  
               permission="VIEW_SURVEY_REPORT" >
         
         <!--Resultados por Encuesta-->

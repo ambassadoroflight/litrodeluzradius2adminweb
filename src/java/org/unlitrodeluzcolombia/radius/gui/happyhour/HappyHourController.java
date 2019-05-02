@@ -18,9 +18,8 @@ import net.comtor.radius.element.Hotspot;
 import org.unlitrodeluzcolombia.radius.gui.finder.HotspotFinder;
 import org.unlitrodeluzcolombia.radius.web.facade.HappyHourWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.HotspotWebFacade;
-
-import web.Images;
 import web.global.ComtorRadiusImages;
+import web.global.LitroDeLuzImages;
 
 /**
  *
@@ -34,7 +33,7 @@ public class HappyHourController
 
     @Override
     public String getEntityName() {
-        return "Hora Libre";
+        return "Pines Happy Hour";
     }
 
     @Override
@@ -129,50 +128,50 @@ public class HappyHourController
 
     @Override
     protected String getTitleImgPath() {
-        return Images.HAPPYHOURS_WHITE_32;
+        return LitroDeLuzImages.HAPPYHOUR_CONTROLLER;
     }
 
     @Override
     public String getLogModule() {
-        return "Horas Libres";
+        return "Pines Happy Hour";
     }
 
     @Override
     public String getAddFormLabel() {
-        return "Nueva Hora Libre";
+        return "Nuevo Pin";
     }
 
     @Override
     public String getAddNewObjectLabel() {
-        return "Crear Hora Libre";
+        return "Crear Pin Happy Hour";
     }
 
     @Override
     public String getEditFormLabel() {
-        return "Editar Hora Libre";
+        return "Editar Pin Happy Hour";
     }
 
     @Override
     public String getConfirmDeleteMessage(HappyHour happyHour) {
-        return "¿Está seguro que desea eliminar el la hora libre <b>["
+        return "¿Está seguro que desea eliminar el pin happy hour <b>["
                 + happyHour.getId() + "] Pin: " + happyHour.getLogin() + "</b>?";
     }
 
     @Override
     public String getAddedMessage(HappyHour happyHour) {
-        return "La hora libre <b>[" + happyHour.getId() + "] Pin: "
+        return "El pin happy hour <b>[" + happyHour.getId() + "] Pin: "
                 + happyHour.getLogin() + "</b> ha sido creado.";
     }
 
     @Override
     public String getDeletedMessage(HappyHour happyHour) {
-        return "La hora libre <b>[" + happyHour.getId() + "] Pin: "
+        return "El pin happy hour <b>[" + happyHour.getId() + "] Pin: "
                 + happyHour.getLogin() + "</b> ha sido eliminada.";
     }
 
     @Override
     public String getUpdatedMessage(HappyHour happyHour) {
-        return "La hora libre <b>[" + happyHour.getId() + "] Pin: "
+        return "El pin happy hour <b>[" + happyHour.getId() + "] Pin: "
                 + happyHour.getLogin() + "</b> ha sido actualizada.";
     }
 
@@ -228,7 +227,7 @@ public class HappyHourController
 
         for (int i = 0; i < values.length; i++) {
             form.addField(values[i], new HtmlCheckbox(keys[i], "active"),
-                    "Indique si el pin de hora libre estará disponible este día.");
+                    "Indique si el pin happy hour estará disponible este día.");
         }
     }
 

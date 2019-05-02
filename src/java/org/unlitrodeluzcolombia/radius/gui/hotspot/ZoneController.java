@@ -2,13 +2,13 @@ package org.unlitrodeluzcolombia.radius.gui.hotspot;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.comtor.advanced.administrable.AdministrableForm;
 import net.comtor.dao.ComtorDaoException;
 import net.comtor.exception.BusinessLogicException;
 import net.comtor.framework.logic.facade.WebLogicFacade;
-import net.comtor.html.HtmlLi;
 import net.comtor.html.HtmlText;
 import net.comtor.html.HtmlUl;
 import net.comtor.html.form.HtmlInputText;
@@ -18,7 +18,7 @@ import net.comtor.radius.element.Zone;
 import net.comtor.radius.facade.HotspotDAOFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.HotspotWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.ZoneWebFacade;
-import web.Images;
+import web.global.LitroDeLuzImages;
 
 /**
  *
@@ -61,7 +61,7 @@ public class ZoneController
         HtmlText field = new HtmlText(zone.getName());
         form.addField("Nombre", field, null);
 
-        LinkedList<Hotspot> hotspots = new LinkedList<>();
+        List<Hotspot> hotspots = new LinkedList<>();
 
         try {
             hotspots = new HotspotWebFacade().findAllByProperty("zone", zone.getId());
@@ -73,7 +73,8 @@ public class ZoneController
             HtmlUl list = new HtmlUl();
 
             for (Hotspot hotspot : hotspots) {
-                list.addListElement("[" + hotspot.getCalled_station_id() + "] " + hotspot.getName());
+                list.addListElement("[" + hotspot.getCalled_station_id() + "] "
+                        + hotspot.getName());
             }
 
             form.addField("Hotspots Asociados", list, null);
@@ -98,7 +99,7 @@ public class ZoneController
 
     @Override
     public String getViewPrivilege() {
-        return "VIEW_SPONSOR";
+        return "VIEW_ZONE";
     }
 
     @Override
@@ -137,7 +138,7 @@ public class ZoneController
 
     @Override
     protected String getTitleImgPath() {
-        return Images.HOTSPOTS_WHITE_32;
+        return LitroDeLuzImages.HOTSPOT_CONTROLLER;
     }
 
     @Override

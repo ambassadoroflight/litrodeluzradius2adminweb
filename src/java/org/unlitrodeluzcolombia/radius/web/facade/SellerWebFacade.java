@@ -111,12 +111,12 @@ public class SellerWebFacade
 
         if (!StringUtil.isValid(seller.getName())) {
             exceptions.add(new ObjectValidatorException("name", "Debe ingresar el "
-                    + "nombre del vendedor."));
+                    + "nombre del gestor."));
         }
 
         if (seller.getKiosk() <= 0) {
             exceptions.add(new ObjectValidatorException("kiosk", "Debe indicar a "
-                    + "cuál kiosco pertenece el vendedor."));
+                    + "cuál kiosco pertenece el gestor."));
         }
     }
 

@@ -12,7 +12,7 @@ import net.comtor.html.form.HtmlInputText;
 import net.comtor.i18n.html.AbstractComtorFacadeAdministratorControllerI18n;
 import net.comtor.radius.element.PrepaidRate;
 import org.unlitrodeluzcolombia.radius.web.facade.PrepaidRateWebFacade;
-import web.Images;
+import web.global.LitroDeLuzImages;
 
 /**
  *
@@ -100,22 +100,22 @@ public class PrepaidRateController
 
     @Override
     public String getLogModule() {
-        return "Tarifas Prepago";
+        return "Tarifas";
     }
 
     @Override
     public String getAddFormLabel() {
-        return "Nueva Tarifa Prepago";
+        return "Nueva Tarifa";
     }
 
     @Override
     public String getAddNewObjectLabel() {
-        return "Crear Tarifa Prepago";
+        return "Crear Tarifa";
     }
 
     @Override
     public String getEditFormLabel() {
-        return "Editar Tarifa Prepago";
+        return "Editar Tarifa";
     }
 
     @Override
@@ -144,7 +144,7 @@ public class PrepaidRateController
 
     @Override
     protected String getTitleImgPath() {
-        return Images.TARIFF_WHITE_32;
+        return LitroDeLuzImages.RATE_CONTROLLER;
     }
 
     private String calculateTotalTime(final long diffInSeconds) {

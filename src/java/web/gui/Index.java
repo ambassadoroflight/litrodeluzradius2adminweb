@@ -103,7 +103,7 @@ public class Index extends TableIndexFactory {
 
         if (can(new HappyHourController())) {
             linkIcons.add(new ComtorLinkIconFishI18n(ComtorGlobal.getLink(HappyHourAdmin.class),
-                    LitroDeLuzImages.HAPPYHOUR_INDEX, "Happy Hour", getRequest()));
+                    LitroDeLuzImages.HAPPYHOUR_INDEX, "Pines Happy Hour", getRequest()));
         }
 
         //todo: privilegio
