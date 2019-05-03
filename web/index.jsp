@@ -44,14 +44,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="framework/images/favicon.png" rel="shortcut icon" />
         <comtor:cssmain></comtor:cssmain>
-        <link type="text/css" rel="stylesheet" href="framework/css/login.css"/>
-        <link type="text/css" rel="stylesheet" href="framework/css/simple-grid.min.css"/>
-        <link type="text/css" rel="stylesheet" href="framework/css/radius.css"/>
+            <link type="text/css" rel="stylesheet" href="framework/css/login.css"/>
+            <link type="text/css" rel="stylesheet" href="framework/css/simple-grid.min.css"/>
+            <link type="text/css" rel="stylesheet" href="framework/css/radius.css"/>
         <comtor:jsjquery></comtor:jsjquery>
         <comtor:jscomtorframework></comtor:jscomtorframework>
-        <script type="text/javascript" src="framework/js/gps.js"></script>
-        <script type="text/javascript" src="framework/js/chart.js/Chart.bundle.min.js"></script> 
-    </head>
+            <script type="text/javascript" src="framework/js/gps.js"></script>
+            <script type="text/javascript" src="framework/js/chart.js/Chart.bundle.min.js"></script> 
+        </head>
 
         <body>
         <comtor:ifsessionexists>
@@ -66,7 +66,9 @@
                 </div>
 
                 <div class="menu">
-                    <span id="classicMenu">
+                    <a href="#" class="menu-icon" onclick="showMenu();">>></a>
+
+                    <span id="classicMenu" class="topnav">
                         <comtor:menuli internationalized="true" menuid="sysMenu"></comtor:menuli>
                         </span>
 
@@ -90,5 +92,16 @@
 
         <comtor:jsprj></comtor:jsprj>               
         <script type="text/javascript" src="https://assets.what3words.com/sdk/v3/what3words.js?key=<%=GlobalWeb.W3W_API_KEY%>"></script>
+        <script>
+            function showMenu() {
+                var sysMenu = $("#sysMenu");
+
+                if (sysMenu.hasClass("responsive")) {
+                    sysMenu.removeClass("responsive");
+                } else {
+                    sysMenu.addClass("responsive");
+                }
+            }
+        </script>
     </body>
 </html>

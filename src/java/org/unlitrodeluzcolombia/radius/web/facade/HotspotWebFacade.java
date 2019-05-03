@@ -105,9 +105,10 @@ public class HotspotWebFacade extends AbstractWebLogicFacade<Hotspot, Long, Hots
         }
     }
 
-    public List<Hotspot> findBySponsor(final Long sponsor) throws BusinessLogicException {
+    public List<Hotspot> find(final Long sponsor, final long zone, final String country,
+            final java.sql.Date start_date, final java.sql.Date end_date) throws BusinessLogicException {
         try {
-            return getDaoFacade().findBySponsor(sponsor);
+            return getDaoFacade().find(sponsor, zone, country, start_date, end_date);
         } catch (ComtorDaoException ex) {
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
 
@@ -158,6 +159,15 @@ public class HotspotWebFacade extends AbstractWebLogicFacade<Hotspot, Long, Hots
         if (hotspot.getZone() <= 0) {
             exceptions.add(new ObjectValidatorException("zone",
                     "Debe indicar a qué zona pertenece el Hotspot."));
+        }
+
+        if (!StringUtil.isValid(hotspot.getWhat3words())) {
+            exceptions.add(new ObjectValidatorException("what3words",
+                    "Debe indicar la ubicación del Hotspot."));
+            exceptions.add(new ObjectValidatorException("coordinates",
+                    "Debe indicar la ubicación del Hotspot."));
+            exceptions.add(new ObjectValidatorException("country_name",
+                    "Debe indicar la ubicación del Hotspot."));
         }
 
         return exceptions;

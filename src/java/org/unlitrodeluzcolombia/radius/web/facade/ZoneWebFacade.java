@@ -71,6 +71,11 @@ public class ZoneWebFacade extends AbstractWebLogicFacade<Zone, Long, ZoneDAOFac
             exceptions.add(new ObjectValidatorException("name", "Debe ingresar un nombre."));
         }
 
+        if (!StringUtil.isValid(zone.getCountry())) {
+            exceptions.add(new ObjectValidatorException("country", 
+                    "Debe indicar el país al que pertenece la zona."));
+        }
+
         return exceptions;
     }
 

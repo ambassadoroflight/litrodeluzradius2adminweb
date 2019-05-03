@@ -4,7 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.comtor.advanced.ajax.HtmlJavaScript;
 import net.comtor.advanced.html.DivForm;
+import net.comtor.advanced.html.HtmlCalendarJQuery;
 import net.comtor.dao.ComtorDaoException;
 import net.comtor.framework.html.administrable.ComtorMessageHelperI18n;
 import net.comtor.framework.jsptag.HtmlGuiInterface;
@@ -15,8 +17,10 @@ import net.comtor.html.HtmlDiv;
 import net.comtor.html.HtmlImg;
 import net.comtor.html.form.HtmlButton;
 import net.comtor.html.form.HtmlSelect;
+import net.comtor.radius.element.Country;
 import net.comtor.radius.element.Hotspot;
 import net.comtor.radius.element.Sponsor;
+import net.comtor.radius.facade.CountryDAOFacade;
 import net.comtor.radius.facade.HotspotDAOFacade;
 import net.comtor.radius.facade.SponsorDAOFacade;
 import web.global.GlobalWeb;
@@ -42,7 +46,7 @@ public class HotspotsMapPage extends HtmlGuiInterface {
     public String getHtml() {
         HtmlContainer mainContainer = new HtmlContainer();
 
-        HtmlDiv controller_title = new HtmlDiv(null, "controller_title", 
+        HtmlDiv controller_title = new HtmlDiv(null, "controller_title",
                 new HtmlImg(LitroDeLuzImages.MAP_CONTROLLER));
         controller_title.addString(TITLE);
 
@@ -70,7 +74,8 @@ public class HotspotsMapPage extends HtmlGuiInterface {
             centerX /= hotspots.size();
             centerY /= hotspots.size();
 
-            HtmlGoogleMap map = new HtmlGoogleMap(GlobalWeb.GOOGLE_MAPS_KEY, centerX, centerY);
+            HtmlGoogleMap map = new HtmlGoogleMap(GlobalWeb.GOOGLE_MAPS_KEY,
+                    centerX, centerY, HtmlGoogleMap.ZOOM_LEVEL_CONTINENT);
             map.addAjaxMarkerList(WS_URL, false);
 
             map_container.addElement(map);
@@ -78,13 +83,28 @@ public class HotspotsMapPage extends HtmlGuiInterface {
             MapSideBar mapSideBar = new MapSideBar();
 
             DivForm filter = new DivForm("", "GET");
-            filter.setTitle("Buscar por Patrocinador");
+            filter.setFormName("hotspot_map_filter");
+            filter.setTitle("Buscar");
             filter.addField("Patrocinador", getSponsorSelect(), null);
+            filter.addField("Pais", getCountry(), null);
             
-            HtmlButton button = new HtmlButton(HtmlButton.SCRIPT_BUTTON, 
+            HtmlSelect zone = new HtmlSelect("zone");
+            zone.addOption("0", "Todas");            
+            filter.addField("Zona", zone, null);
+            
+            filter.addField("Fecha Inicio Campaña", new HtmlCalendarJQuery("start_date"), null);
+            filter.addField("Fecha Final Campaña", new HtmlCalendarJQuery("end_date"), null);
+
+            HtmlButton search = new HtmlButton(HtmlButton.SCRIPT_BUTTON,
                     "hotspot_map_filter_button", "Buscar", "getHotspots();");
-            filter.addButtons(button);
+
+            HtmlButton clear = new HtmlButton(HtmlButton.SCRIPT_BUTTON,
+                    "hotspot_map_clear_filter_button", "Limpiar", "clearSearch();");
+            
+            filter.addButtons(search, clear);
+            
             mapSideBar.add(filter);
+            mapSideBar.add(getJS());
 
             map_container.addElement(mapSideBar);
         } catch (Exception ex) {
@@ -118,6 +138,53 @@ public class HotspotsMapPage extends HtmlGuiInterface {
         }
 
         return select;
+    }
+
+    private HtmlSelect getCountry() throws ComtorDaoException {
+        HtmlSelect select = new HtmlSelect("country");
+        select.addOption("", "Todos");
+
+        List<Country> countries = new CountryDAOFacade().findAll();
+
+        if (!countries.isEmpty()) {
+            for (Country country : countries) {
+                select.addOption(country.getIso(), country.getName());
+            }
+        }
+
+        return select;
+    }
+
+    private HtmlJavaScript getJS() {
+        String js = "\n"
+                + " $(document).ready(function() {\n"
+                + "     var $country = $(\"select#country\"); \n"
+                + "     var $zone = $(\"select#zone\"); \n\n"
+                + ""
+                + "     $country.change(function() { \n"
+                + "         var iso = $(this).val(); \n"
+                + "\n"
+                + "    var settings = {\n"
+                + "        \"url\": \"/litrodeluz/radius/webservices/hotspot_services/map/get_zones?country=\" + iso, \n"
+                + "        \"method\": \"GET\",\n"
+                + "    }\n\n"
+                + ""
+                + "     $zone.empty();\n"
+                + "     $zone.append('<option value=\"\">Todas</option>');\n\n"
+                + ""
+                + "     $.ajax(settings) \n"
+                + "         .done(function (response) { \n"
+                + "             $.each(response, function(i, item) {\n"
+                + "                 $zone.append('<option value=\"' + item.id + '\">' + item.name + '</option>');\n"
+                + "             });\n"
+                + "         }) \n"
+                + "         .fail(function(jqXHR, textStatus){ \n"
+                + "             console.error(textStatus);\n"
+                + "         });\n"
+                + "     });\n"
+                + " }); \n";
+
+        return new HtmlJavaScript(js);
     }
 
 }

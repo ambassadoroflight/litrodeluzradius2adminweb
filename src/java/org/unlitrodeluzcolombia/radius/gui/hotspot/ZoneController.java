@@ -12,9 +12,12 @@ import net.comtor.framework.logic.facade.WebLogicFacade;
 import net.comtor.html.HtmlText;
 import net.comtor.html.HtmlUl;
 import net.comtor.html.form.HtmlInputText;
+import net.comtor.html.form.HtmlSelect;
 import net.comtor.i18n.html.AbstractComtorFacadeAdministratorControllerI18n;
+import net.comtor.radius.element.Country;
 import net.comtor.radius.element.Hotspot;
 import net.comtor.radius.element.Zone;
+import net.comtor.radius.facade.CountryDAOFacade;
 import net.comtor.radius.facade.HotspotDAOFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.HotspotWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.ZoneWebFacade;
@@ -47,19 +50,25 @@ public class ZoneController
     public void initForm(AdministrableForm form, Zone zone)
             throws BusinessLogicException {
         if (zone != null) {
-            final long zone_id = zone.getId();
-
-            form.addInputHidden("id", zone_id);
+            form.addInputHidden("id", zone.getId());
         }
 
         HtmlInputText name = new HtmlInputText("name", 32, 64);
         form.addField("Nombre", name, null, true);
+
+        HtmlSelect country = getCountrySelect();
+        form.addField("País", country, null, true);
     }
 
     @Override
     public void initFormView(AdministrableForm form, Zone zone) {
-        HtmlText field = new HtmlText(zone.getName());
+        HtmlText field;
+
+        field = new HtmlText(zone.getName());
         form.addField("Nombre", field, null);
+
+        field = new HtmlText(zone.getCountry_name());
+        form.addField("País", field, null);
 
         List<Hotspot> hotspots = new LinkedList<>();
 
@@ -112,6 +121,7 @@ public class ZoneController
         LinkedHashMap<String, String> headers = new LinkedHashMap<>();
         headers.put("id", "ID");
         headers.put("name", "Nombre");
+        headers.put("country", "País");
         headers.put("", "# Hotspots Asociados");
 
         return headers;
@@ -124,6 +134,7 @@ public class ZoneController
 
         row.add(id);
         row.add(zone.getName());
+        row.add(zone.getCountry_name());
 
         try {
             row.add(hotspotFacade.getCountByZone(id));
@@ -188,6 +199,27 @@ public class ZoneController
     @Override
     public String getViewPrivilegeMsg() {
         return "Ud. no tiene permisos para ingresar a este módulo.";
+    }
+
+    private HtmlSelect getCountrySelect() {
+        HtmlSelect select = new HtmlSelect("country");
+        select.addOption("", "Seleccione un país");
+
+        List<Country> countries;
+
+        try {
+            countries = new CountryDAOFacade().findAll();
+
+            for (Country country : countries) {
+                select.addOption(country.getIso(), country.getName());
+            }
+
+            select.setSelected(Zone.DEFAULT_COUNTRY);
+        } catch (ComtorDaoException ex) {
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+
+        return select;
     }
 
 }
