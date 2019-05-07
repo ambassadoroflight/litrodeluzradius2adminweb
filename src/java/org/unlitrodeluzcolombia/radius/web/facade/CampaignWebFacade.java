@@ -78,7 +78,7 @@ public class CampaignWebFacade
         File file1 = getRequest().getMparser().getFile("banner_1_file");
 
         if (file1 != null) {
-            File desFile = new File(GlobalWeb.ADS_DIRECTORY + File.separator 
+            File desFile = new File(GlobalWeb.ADS_DIRECTORY + File.separator
                     + campaign.getBanner_1());
 
             try {
@@ -91,7 +91,7 @@ public class CampaignWebFacade
         File file2 = getRequest().getMparser().getFile("banner_2_file");
 
         if (file2 != null) {
-            File desFile2 = new File(GlobalWeb.ADS_DIRECTORY + File.separator 
+            File desFile2 = new File(GlobalWeb.ADS_DIRECTORY + File.separator
                     + campaign.getBanner_2());
 
             try {
@@ -154,6 +154,9 @@ public class CampaignWebFacade
         java.sql.Date endDate = campaign.getEnd_date();
 
         if (endDate != null) {
+            exceptions.add(new ObjectValidatorException("end_date",
+                    "Debe ingresar una fecha final."));
+        } else {
             if (startDate.after(endDate)) {
                 exceptions.add(new ObjectValidatorException("start_date",
                         "Fecha inicial debe ser anterior a la fecha final."));

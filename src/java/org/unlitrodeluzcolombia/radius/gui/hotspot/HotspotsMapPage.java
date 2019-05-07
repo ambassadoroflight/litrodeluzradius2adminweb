@@ -12,6 +12,7 @@ import net.comtor.framework.html.administrable.ComtorMessageHelperI18n;
 import net.comtor.framework.jsptag.HtmlGuiInterface;
 import net.comtor.framework.maps.HtmlGoogleMap;
 import net.comtor.framework.maps.MapSideBar;
+import net.comtor.framework.util.security.SecurityHelper;
 import net.comtor.html.HtmlContainer;
 import net.comtor.html.HtmlDiv;
 import net.comtor.html.HtmlImg;
@@ -44,6 +45,12 @@ public class HotspotsMapPage extends HtmlGuiInterface {
 
     @Override
     public String getHtml() {
+        if (!SecurityHelper.canAll(new HotspotController(), getRequest())) {
+            return ComtorMessageHelperI18n.getErrorForm(TITLE, "index.jsp",
+                    "Ud. no tiene permisos para ingresar a este módulo", getRequest())
+                    .getHtml();
+        }
+
         HtmlContainer mainContainer = new HtmlContainer();
 
         HtmlDiv controller_title = new HtmlDiv(null, "controller_title",
@@ -63,7 +70,8 @@ public class HotspotsMapPage extends HtmlGuiInterface {
 
             if (hotspots.isEmpty()) {
                 return ComtorMessageHelperI18n.getErrorForm(TITLE, "index.jsp",
-                        "No se encontraron ubicaciones para mostrar en el mapa.", request).getHtml();
+                        "No se encontraron ubicaciones para mostrar en el mapa.",
+                        request).getHtml();
             }
 
             for (Hotspot hotspot : hotspots) {
@@ -75,7 +83,7 @@ public class HotspotsMapPage extends HtmlGuiInterface {
             centerY /= hotspots.size();
 
             HtmlGoogleMap map = new HtmlGoogleMap(GlobalWeb.GOOGLE_MAPS_KEY,
-                    centerX, centerY, HtmlGoogleMap.ZOOM_LEVEL_CONTINENT);
+                    centerX, centerY, 3);
             map.addAjaxMarkerList(WS_URL, false);
 
             map_container.addElement(map);
@@ -87,11 +95,11 @@ public class HotspotsMapPage extends HtmlGuiInterface {
             filter.setTitle("Buscar");
             filter.addField("Patrocinador", getSponsorSelect(), null);
             filter.addField("Pais", getCountry(), null);
-            
+
             HtmlSelect zone = new HtmlSelect("zone");
-            zone.addOption("0", "Todas");            
+            zone.addOption("0", "Todas");
             filter.addField("Zona", zone, null);
-            
+
             filter.addField("Fecha Inicio Campaña", new HtmlCalendarJQuery("start_date"), null);
             filter.addField("Fecha Final Campaña", new HtmlCalendarJQuery("end_date"), null);
 
@@ -100,9 +108,9 @@ public class HotspotsMapPage extends HtmlGuiInterface {
 
             HtmlButton clear = new HtmlButton(HtmlButton.SCRIPT_BUTTON,
                     "hotspot_map_clear_filter_button", "Limpiar", "clearSearch();");
-            
+
             filter.addButtons(search, clear);
-            
+
             mapSideBar.add(filter);
             mapSideBar.add(getJS());
 

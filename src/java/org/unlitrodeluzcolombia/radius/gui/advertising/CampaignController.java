@@ -101,7 +101,7 @@ public class CampaignController
 
         HtmlCalendarJQuery end_date = new HtmlCalendarJQuery("end_date");
         form.addField("Hasta", end_date, "Indique hasta qué fecha se "
-                + "estará disponible esta campaña.");
+                + "estará disponible esta campaña.", true);
 
         try {
             getZonesCheckList(form, campaign);

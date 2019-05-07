@@ -19,7 +19,6 @@ import net.comtor.i18n.html.AbstractComtorFacadeAdministratorControllerI18n;
 import net.comtor.radius.element.Kiosk;
 import org.unlitrodeluzcolombia.radius.web.facade.KioskWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.SellerWebFacade;
-import web.Images;
 import web.global.LitroDeLuzImages;
 
 /**
@@ -41,7 +40,7 @@ public class SellerController
     public WebLogicFacade<Seller, String> getLogicFacade() {
         return new SellerWebFacade();
     }
-    
+
     @Override
     public void initForm(AdministrableForm form, Seller seller) throws BusinessLogicException {
         if (seller == null) {
@@ -135,7 +134,7 @@ public class SellerController
         LinkedList<Object> row = new LinkedList<>();
         row.add(seller.getLogin());
         row.add(seller.getName());
-        row.add("[" + seller.getKiosk() + "] " + seller.getKiosk_name());
+        row.add(seller.getKiosk_name());
         row.add(seller.isActive() ? "Activo" : "Inactivo");
 
         return row;

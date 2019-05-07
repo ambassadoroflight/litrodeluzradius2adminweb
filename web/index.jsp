@@ -39,8 +39,7 @@
 <html>
     <head>
         <title><%=title%></title>
-        <!--<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">-->
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="framework/images/favicon.png" rel="shortcut icon" />
         <comtor:cssmain></comtor:cssmain>
@@ -66,11 +65,11 @@
                 </div>
 
                 <div class="menu">
-                    <a href="#" class="menu-icon" onclick="showMenu();">>></a>
-
-                    <span id="classicMenu" class="topnav">
+                    <span id="classicMenu" class="topnav">                       
                         <comtor:menuli internationalized="true" menuid="sysMenu"></comtor:menuli>
                         </span>
+
+                        <a href="#" class="menu-icon" onclick="showMenu();" title="Expandir Menú">&#9776;</a>
 
                     <comtor:guielement clazz="web.gui.userInfo.HtmlUserSpecificMenu"></comtor:guielement>
                     </div>
@@ -86,12 +85,11 @@
 
         <div id="footer">
             <span id="disclaimer">               
-                <span class="disclaimerText">© <a href="http://inlitrodeluzcolombia.org"> Litro de Luz Colombia</a> - <%=ComtorGlobal.CURRENT_YEAR%></span>
+                <span class="disclaimerText">© <a href="http://unlitrodeluzcolombia.org"> Litro de Luz Colombia</a> - <%=ComtorGlobal.CURRENT_YEAR%></span>
             </span>
         </div>
 
         <comtor:jsprj></comtor:jsprj>               
-        <script type="text/javascript" src="https://assets.what3words.com/sdk/v3/what3words.js?key=<%=GlobalWeb.W3W_API_KEY%>"></script>
         <script>
             function showMenu() {
                 var sysMenu = $("#sysMenu");

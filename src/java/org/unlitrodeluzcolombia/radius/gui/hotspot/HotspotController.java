@@ -6,7 +6,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.comtor.advanced.administrable.AdministrableForm;
 import net.comtor.advanced.ajax.HtmlJavaScript;
-import net.comtor.advanced.html.HtmlFinder;
 import net.comtor.dao.ComtorDaoException;
 import net.comtor.exception.BusinessLogicException;
 import net.comtor.framework.logic.facade.WebLogicFacade;
@@ -19,9 +18,8 @@ import net.comtor.i18n.html.AbstractComtorFacadeAdministratorControllerI18n;
 import net.comtor.radius.element.Hotspot;
 import net.comtor.radius.element.Zone;
 import net.comtor.radius.facade.ZoneDAOFacade;
-import org.unlitrodeluzcolombia.radius.gui.finder.ZoneFinder;
 import org.unlitrodeluzcolombia.radius.web.facade.HotspotWebFacade;
-import org.unlitrodeluzcolombia.radius.web.facade.ZoneWebFacade;
+import web.global.GlobalWeb;
 import web.global.LitroDeLuzImages;
 
 /**
@@ -72,11 +70,13 @@ public class HotspotController
         HtmlInputText password = new HtmlInputText("password", 32, 64);
         form.addField("Contraseña", password, "Indique la contraseña de acceso "
                 + "al Hotspot para configuración.");
-        
+
         form.addSubTitle("Ubicación");
 
         HtmlInputText what3words = new HtmlInputText("what3words");
-        form.addField("What3Words", what3words, "Ingrese las 3 palabras correspondientes a esta ubicación.", true);
+        what3words.addAttribute("onblur", "getW3WInfo();");
+        form.addField("What3Words", what3words, "Ingrese las 3 palabras "
+                + "correspondientes a esta ubicación.", true);
 
         HtmlButton button = new HtmlButton(HtmlButton.SCRIPT_BUTTON, "w3w_button",
                 "Confirmar W3W", "getW3WInfo();");
@@ -96,6 +96,11 @@ public class HotspotController
 
         HtmlSelect zone = getZoneSelect(hotspot);
         form.addField("Zona", zone, null, true);
+
+        HtmlJavaScript w3wAPI = new HtmlJavaScript();
+        w3wAPI.addAttribute("src", ("https://assets.what3words.com/sdk/v3/what3words.js?key="
+                + GlobalWeb.W3W_API_KEY));
+        form.addRowInOneCell(w3wAPI);
 
         form.addRowInOneCell(getW3WScript());
     }
@@ -125,7 +130,8 @@ public class HotspotController
         field = new HtmlText(hotspot.getWhat3words());
         form.addField("What3Words", field, null);
 
-        HtmlIFrame map = new HtmlIFrame("w3w_map_frame", "", "https://map.what3words.com/" + hotspot.getWhat3words());
+        HtmlIFrame map = new HtmlIFrame("w3w_map_frame", "",
+                "https://map.what3words.com/" + hotspot.getWhat3words());
         form.addRowInOneCell(map);
     }
 
@@ -234,7 +240,7 @@ public class HotspotController
 
     private HtmlSelect getZoneSelect(Hotspot hotspot) {
         HtmlSelect select = new HtmlSelect("zone");
-        
+
         if (hotspot == null) {
             select.addOption("", "Seleccione una zona");
         } else {
@@ -248,10 +254,10 @@ public class HotspotController
                     }
                 }
             } catch (ComtorDaoException ex) {
-               LOG.log(Level.SEVERE, ex.getMessage(), ex);
+                LOG.log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
-        
+
         return select;
     }
 
@@ -261,16 +267,16 @@ public class HotspotController
                 + "    var $what3words = $(\"input#what3words\"); \n"
                 + "    var $lat = $(\"input#latitude\"); \n"
                 + "    var $lng = $(\"input#longitude\"); \n"
-                + "    var w3w = $what3words.val(); \n"
-                + "\n"
+                + "    var w3w = encodeURI($what3words.val()); \n\n"
+                + ""
                 + "    var settings = {\n"
                 + "        \"async\": true,\n"
                 + "        \"crossDomain\": true,\n"
-                + "        \"url\": \"https://api.what3words.com/v3/convert-to-coordinates?key=NEVMR2XP&words=\" + w3w + \"&language=es&format=json\", \n"
+                + "        \"url\": \"https://api.what3words.com/v3/convert-to-coordinates?key=" + GlobalWeb.W3W_API_KEY + "&words=\" + w3w + \"&language=es&format=json\", \n"
                 + "        \"method\": \"GET\",\n"
                 + "        \"headers\": {}\n"
-                + "    }\n"
-                + "\n"
+                + "    }\n\n"
+                + ""
                 + "    $.ajax(settings)\n"
                 + "     .done(function (response) { \n"
                 + "         var x = response[\"coordinates\"][\"lat\"]; \n"
@@ -284,23 +290,22 @@ public class HotspotController
                 + "      getZonesSelect(iso);\n"
                 + "     }) \n"
                 + "     .fail(function(jqXHR, textStatus){ \n"
-                + "         alert(\"Las palabras ingresadas '\" + w3w + \"' no son válidas. Intente nuevamente.\"); \n"
-                + "\n"
+                + "         alert(\"Las palabras ingresadas '\" + w3w + \"' no son válidas. Intente nuevamente.\"); \n\n"
+                + ""
                 + "         $lat.val(\"\"); \n"
                 + "         $lng.val(\"\"); \n"
                 + "         $(\"#coordinates\").val(\"\"); \n"
                 + "        $(\"#country_name\").val(\"\"); \n"
                 + "        $(\"#zone\").empty();\n"
                 + "     });\n"
-                + "} \n"
-                + "\n"
+                + "} \n\n"
+                + ""
                 + "function getCountryName(iso) { \n"
-                + "  console.log(\"buscando \" + iso);\n"
                 + "      var settings = {\n"
                 + "        \"url\": \"/litrodeluz/radius/webservices/hotspot_services/map/get_country?iso=\" + iso, \n"
                 + "        \"method\": \"GET\",\n"
-                + "    }\n"
-                + "\n"
+                + "    }\n\n"
+                + ""
                 + "       $.ajax(settings) \n"
                 + "     .done(function (response) { \n"
                 + "        $(\"#country_name\").val(response); \n"
@@ -308,28 +313,28 @@ public class HotspotController
                 + "     .fail(function(jqXHR, textStatus){ \n"
                 + "        $(\"#country_name\").val(\"\"); \n"
                 + "     });\n"
-                + "}\n"
-                + "\n"
+                + "}\n\n"
+                + ""
                 + "function getZonesSelect(country) {\n"
                 + "      var settings = {\n"
                 + "        \"url\": \"/litrodeluz/radius/webservices/hotspot_services/map/get_zones?country=\" + country, \n"
                 + "        \"method\": \"GET\",\n"
-                + "    }\n"
-                + "\n"
+                + "    }\n\n"
+                + ""
                 + "       $.ajax(settings) \n"
                 + "     .done(function (response) { \n"
-                + "         var $zone = $(\"#zone\");\n"
-                + "         $zone.empty();\n"
-                + "         $.each(response, function(i, item) {\n"
-                + "             $zone.append('<option value=\"'+item.id+'\">'+item.name+'</option>');\n"
+                + "         var $zone = $(\"#zone\"); \n"
+                + "         $zone.empty(); \n"
+                + "         $.each(response, function(i, item) { \n"
+                + "             $zone.append('<option value=\"'+item.id+'\">'+item.name+'</option>'); \n"
                 + "         });\n"
                 + "     }) \n"
                 + "     .fail(function(jqXHR, textStatus){ \n"
-                + "         $zone.empty().append('<option selected=\"selected\" value=\"\">Seleccione una zona</option>');\n"
-                + "     });\n"
-                + "} ";
+                + "         $zone.empty().append('<option selected=\"selected\" value=\"\">Seleccione una zona</option>'); \n"
+                + "     }); \n"
+                + "} \n";
 
         return new HtmlJavaScript(js);
-    }   
+    }
 
 }

@@ -26,7 +26,10 @@ import net.comtor.html.HtmlContainer;
 import net.comtor.html.HtmlDiv;
 import net.comtor.html.HtmlElement;
 import net.comtor.html.HtmlHr;
+import net.comtor.html.HtmlTable;
+import net.comtor.html.HtmlTd;
 import net.comtor.html.HtmlText;
+import net.comtor.html.HtmlTr;
 import net.comtor.html.HtmlUl;
 import net.comtor.html.form.HtmlButton;
 import net.comtor.html.form.HtmlCheckbox;
@@ -54,7 +57,7 @@ import org.unlitrodeluzcolombia.radius.gui.finder.CampaignFinder;
 import org.unlitrodeluzcolombia.radius.web.facade.CampaignWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.SurveyWebFacade;
 import web.global.LitroDeLuzImages;
-import web.gui.SurveyQuestionBox;
+import web.gui.SurveyQuestionCard;
 
 /**
  *
@@ -303,10 +306,22 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
                     "No hay respuestas para mostrar de esta encuesta.", request);
         }
 
+        Campaign campaign = new CampaignWebFacade().find(survey.getCampaign());
+
         AdministrableForm form = new DivFormI18n(getBaseUrl(), AdministrableForm.METHOD_POST,
                 getRequest());
         form.setTitle("Respuestas de la Encuesta " + survey.getId());
         form.setFormName(getFormName());
+
+        HtmlText field;
+        field = new HtmlText(campaign.getSponsor_name());
+        form.addField("Patrocinador", field, null);
+
+        field = new HtmlText(campaign.getDescription());
+        form.addField("Campaña", field, null);
+
+        field = new HtmlText(survey.getDescription());
+        form.addField("Descripción Encuesta", field, null);
 
         try {
             LinkedList<Question> questions = new QuestionDAOFacade()
@@ -323,28 +338,26 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
                 if (question.getType().equals(QuestionType.OPEN_QUESTION.toString())) {
                     content = listOpenQuestionAnswers(answers);
                 } else if (question.getType().equals(QuestionType.SINGLE.toString())) {
-//                    content = getPieChart2(answers, question.getId());
-                    content = getBarChart2(answers, question.getId());
+                    content = getPieChart(answers, question.getId());
                 } else if (question.getType().equals(QuestionType.MULTIPLE.toString())) {
                     content = getBarChart(answers, question.getId());
                 }
 
-                SurveyQuestionBox box = new SurveyQuestionBox(i, question.getQuestion(), content);
+                SurveyQuestionCard box = new SurveyQuestionCard(i, question.getQuestion(), content);
 
                 form.addRowInOneCell(box);
 
                 i++;
             }
-
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
 
             return ComtorMessageHelperI18n.getErrorForm(getAddFormLabel(),
                     getBaseUrl(), ex, true, request);
         }
 
         form.addButton("cancel", "Regresar");
-        
+
         return form;
     }
 
@@ -447,14 +460,20 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
                 + getKey(survey), ActionIcon.VIEW_24, "Ver respuestas");
     }
 
-    private HtmlUl listOpenQuestionAnswers(final LinkedList<Answer> answers) {
-        HtmlUl list = new HtmlUl();
+    private HtmlTable listOpenQuestionAnswers(final LinkedList<Answer> answers) {
+        HtmlTable table = new HtmlTable();
+        HtmlTr row;
+        int i = 1;
 
         for (Answer answer : answers) {
-            list.addListElement(answer.getResponse());
+            row = new HtmlTr();
+            row.addElement(new HtmlTd((i++) + ""));
+            row.addElement(new HtmlTd(answer.getResponse()));
+
+            table.addElement(row);
         }
 
-        return list;
+        return table;
     }
 
     private HtmlDiv getPieChart(final LinkedList<Answer> answers,
@@ -489,6 +508,7 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
         }
 
         ChartPie pieChart = new ChartPie("canvas_question_" + questionID, datasets);
+        pieChart.setDimentions(800, 400);
 
         HtmlDiv container = new HtmlDiv();
         container.addElement(pieChart.getHtml());
@@ -533,56 +553,11 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
         ChartData data = new ChartData(null, datasets);
 
         ChartBar barChart = new ChartBar("canvas_question_" + questionID, data);
+        barChart.setDimentions(800, 400);
 
         HtmlDiv container = new HtmlDiv();
         container.addElement(barChart.getHtml());
 
         return container;
-
-    }
-
-    private HtmlDiv getBarChart2(final LinkedList<Answer> answers,
-            final long questionID) {
-        Map<String, Integer> map = new HashMap<>();
-
-        for (Answer answer : answers) {
-            String key = answer.getResponse();
-
-            if (map.containsKey(key)) {
-                int value = map.get(key);
-                ++value;
-
-                map.put(key, value);
-            } else {
-                map.put(key, 1);
-            }
-
-        }
-
-        LinkedList<ChartDataset> datasets = new LinkedList<>();
-        ChartDataset dataset;
-        int color = 1;
-
-        for (Map.Entry<String, Integer> entrySet : map.entrySet()) {
-            dataset = new ChartDataset(entrySet.getKey(), color, entrySet.getValue());
-            datasets.add(dataset);
-
-            ++color;
-
-            if (color > 14) {
-                color = 1;
-            }
-
-        }
-
-        ChartData data = new ChartData(null, datasets);
-
-        ChartBar barChart = new ChartBar("canvas_question_" + questionID, data);
-
-        HtmlDiv container = new HtmlDiv();
-        container.addElement(barChart.getHtml());
-
-        return container;
-
     }
 }

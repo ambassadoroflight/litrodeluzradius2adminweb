@@ -38,14 +38,31 @@ public class SurveyReportController extends ReportControllerJDBC {
     protected ReportJDBCPreparedQuery createPreparedQuery(HttpServletMixedRequest request) {
         ReportJDBCPreparedQuery query = new ReportJDBCPreparedQuery("\n"
                 + " SELECT \n"
-                + "    qu.question                          AS 'Pregunta', \n"
-                + "    REPLACE(an.response, '#_#', ', ')    AS 'Respuesta', \n"
-                + "    an.answer_date                       AS 'Fecha' \n"
-                + "FROM \n"
-                + "    survey su \n"
-                + "JOIN question qu ON (qu.survey = su.id) \n"
-                + "LEFT JOIN answer an ON (an.question = qu.id) \n"
-                + "WHERE \n"
+                + "     su.id										AS 'Encuesta', \n"
+                + "     su.description								AS 'Descripción Encuesta', \n"
+                + "     sp.name                                     AS 'Patrocinador', \n"
+                + "     ca.description								AS 'Descripción Campaña', \n"
+                + "     ca.start_date								AS 'Fecha Inicio Campaña', \n"
+                + "     ca.end_date                                 AS 'Fecha Final Campaña', \n"
+                + "     co.name                                     AS 'País', \n"
+                + "     z.name										AS 'Zona', \n"
+                + "     h.called_station_id                         AS 'Called Station ID Hotspot', \n"
+                + "     h.name										AS 'Nombre Hotspot', \n"
+                + "     h.what3words								AS 'What3Words', \n"
+                + "     CONCAT(h.latitude, ', ', h.longitude)		AS 'Coordenadas', \n"
+                + "     qu.question                          		AS 'Pregunta', \n"
+                + "     REPLACE(an.response, '#_#', ', ')			AS 'Respuesta', \n"
+                + "     an.answer_date                       		AS 'Fecha Respuesta' \n"
+                + " FROM \n"
+                + "     survey su \n"
+                + " JOIN question qu            ON (qu.survey = su.id) \n"
+                + " LEFT JOIN answer an         ON (an.question = qu.id) \n"
+                + " JOIN campaign ca            ON (ca.id = su.campaign) \n"
+                + " JOIN hotspot h              ON (h.id = an.hotspot) \n"
+                + " JOIN zone z                 ON (z.id = h.zone) \n"
+                + " JOIN country co             ON (co.iso = z.country) \n"
+                + " JOIN sponsor sp             ON (sp.id = ca.sponsor) \n"
+                + " WHERE \n"
                 + "    su.id = ? \n");
 
         long survey = RequestBasicValidator.getLongFromRequest(request,
@@ -104,6 +121,16 @@ public class SurveyReportController extends ReportControllerJDBC {
     @Override
     public boolean isPaginated() {
         return true;
+    }
+
+    @Override
+    public String getReturnLabel() {
+        return "Regresar";
+    }
+
+    @Override
+    public String[] getPrivileges() {
+        return new String[]{"VIEW_SURVEY_REPORT"};
     }
 
 }

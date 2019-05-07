@@ -23,13 +23,11 @@ import net.comtor.radius.element.Kiosk;
 import net.comtor.radius.element.PrepaidCustomer;
 import net.comtor.radius.element.PrepaidRate;
 import net.comtor.radius.element.Seller;
-import net.comtor.radius.element.SellerAuthToken;
 import net.comtor.radius.facade.PrepaidCustmerDAOFacade;
 import net.comtor.radius.facade.PrepaidRateDAOFacade;
 import net.comtor.radius.facade.SellerDAOFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.HappyHourWebFacade;
 import org.unlitrodeluzcolombia.radius.web.facade.KioskWebFacade;
-import org.unlitrodeluzcolombia.radius.web.facade.SellerWebFacade;
 import org.unlitrodeluzcolombia.radius.ws.io.PinSellInput;
 import net.comtor.util.StringUtil;
 import org.json.JSONArray;
@@ -109,9 +107,6 @@ public class LitroDeLuzRadiusResource {
 
         Kiosk kiosk = new KioskWebFacade().find(seller.getKiosk());
 
-        SellerAuthToken token = new SellerAuthToken(username, username, null);
-
-//        new SellerAuthTokenDAOFacade().
         LinkedList<PrepaidRate> rates;
 
         try {
@@ -197,25 +192,19 @@ public class LitroDeLuzRadiusResource {
         }
     }
 
-    //TODO: OBTENER EL KIOSCO O HOTSPOT EN LUGAR DEL VENDEDOR
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value = "/v1/happyhour")
-    public Response happyHours(@QueryParam("seller") String seller_login) {
+    public Response happyHours(@QueryParam("hotspot") long hotspot) {
         try {
-            if (!StringUtil.isValid(seller_login)) {
+            if (hotspot <= 0) {
                 return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity(new LoginOutput("Vendedor no válido"))
+                        .entity(new LoginOutput("Hotspot no válido"))
                         .build();
             }
 
-            Seller seller = new SellerWebFacade().find(seller_login);
-            long kioskId = seller.getKiosk();
-
-            Kiosk kiosk = new KioskWebFacade().find(kioskId);
-
             LinkedList<HappyHour> happyHours = new HappyHourWebFacade()
-                    .findAllByProperty("hotspot", kiosk.getHotspot());
+                    .findAllByProperty("hotspot", hotspot);
 
             GenericEntity<LinkedList<HappyHour>> list
                     = new GenericEntity<LinkedList<HappyHour>>(happyHours) {
@@ -232,57 +221,5 @@ public class LitroDeLuzRadiusResource {
                     .build();
         }
     }
-    
-    
-        /**
 
-     *
-   
-     * @return
-     */
-   /* @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value = "/v1/encuesta")
-    public Response processSurvey(PinSellInput soldPin) {
-        String pin = soldPin.getPin();
-        long purchased_time = soldPin.getPurchased_time();
-        String pin_type = soldPin.getPin_type();
-        String seller = soldPin.getSeller();
-        Timestamp creation_date = new Timestamp(soldPin.getCreation_date());
-        String name = soldPin.getCustomer_name();
-
-        PrepaidCustomer prepaidCustomer = new PrepaidCustomer(pin, purchased_time,
-                pin_type, seller);
-        prepaidCustomer.setCreation_date(creation_date);
-        prepaidCustomer.setAttr_1(name);
-
-        try {
-            new PrepaidCustmerDAOFacade().create(prepaidCustomer);
-
-            return Response
-                    .ok(prepaidCustomer)
-                    .build();
-        } catch (ComtorDaoException ex) {
-            LOG.log(Level.SEVERE, ex.getMessage(), ex);
-
-            return Response.serverError()
-                    .entity(new LoginOutput("Error interno"))
-                    .build();
-        }
-    }*/
-
-    /*
-     private String generateAuthToken(String login) throws ComtorDaoException {
-     long now = System.currentTimeMillis();
-     //        String token = ClaroUtil.generateToken(6) + "-" + now;
-     String token = "";
-     long expirationDate = now + (1000 * 60 * 60 * AuthToken.TOKEN_VALID_HOURS);
-
-     SellerAuthToken authToken = new SellerAuthToken(login, token, expirationDate);
-
-     new SellerAuthTokenDAOFacade().createOrEdit(authToken);
-
-     return token;
-     }*/
 }

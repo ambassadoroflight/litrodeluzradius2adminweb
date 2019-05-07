@@ -67,9 +67,10 @@ public class Index extends TableIndexFactory {
                     LitroDeLuzImages.HOTSPOT_INDEX, "Hotspots", getRequest()));
         }
 
-        //todo: privilegio
-        linkIcons.add(new ComtorLinkIconFishI18n(ComtorGlobal.getLink(HotspotsMapPage.class),
-                LitroDeLuzImages.MAP_INDEX, "Mapa de Hotspots", getRequest()));
+        if (can(new HotspotController())) {
+            linkIcons.add(new ComtorLinkIconFishI18n(ComtorGlobal.getLink(HotspotsMapPage.class),
+                    LitroDeLuzImages.MAP_INDEX, "Mapa de Hotspots", getRequest()));
+        }
 
         if (can(new SponsorController())) {
             linkIcons.add(new ComtorLinkIconFishI18n(ComtorGlobal.getLink(SponsorAdmin.class),
@@ -106,9 +107,10 @@ public class Index extends TableIndexFactory {
                     LitroDeLuzImages.HAPPYHOUR_INDEX, "Pines Happy Hour", getRequest()));
         }
 
-        //todo: privilegio
-        linkIcons.add(new ComtorLinkIconFishI18n(ComtorGlobal.getLink(SurveyReportPage.class),
-                LitroDeLuzImages.REPORT_INDEX, "Reporte de Resultados por Encuesta", getRequest()));
+        if (can("VIEW_SURVEY_REPORT")) {
+            linkIcons.add(new ComtorLinkIconFishI18n(ComtorGlobal.getLink(SurveyReportPage.class),
+                    LitroDeLuzImages.REPORT_INDEX, "Reporte de Resultados por Encuesta", getRequest()));
+        }
 
         return linkIcons;
     }
@@ -130,5 +132,9 @@ public class Index extends TableIndexFactory {
                 || SecurityHelper.can(controller.getEditPrivilege(), getRequest())
                 || SecurityHelper.can(controller.getAddPrivilege(), getRequest())
                 || SecurityHelper.can(controller.getViewPrivilege(), getRequest());
+    }
+
+    private boolean can(String privilege) {
+        return SecurityHelper.can(privilege, getRequest());
     }
 }
