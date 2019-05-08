@@ -89,6 +89,8 @@
             </span>
         </div>
 
+        <%@include file="about.jsp" %>
+
         <comtor:jsprj></comtor:jsprj>               
         <script>
             function showMenu() {

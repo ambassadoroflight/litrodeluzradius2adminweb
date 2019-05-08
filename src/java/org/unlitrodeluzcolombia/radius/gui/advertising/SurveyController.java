@@ -30,7 +30,6 @@ import net.comtor.html.HtmlTable;
 import net.comtor.html.HtmlTd;
 import net.comtor.html.HtmlText;
 import net.comtor.html.HtmlTr;
-import net.comtor.html.HtmlUl;
 import net.comtor.html.form.HtmlButton;
 import net.comtor.html.form.HtmlCheckbox;
 import net.comtor.html.form.HtmlInput;
@@ -457,7 +456,7 @@ public class SurveyController extends AbstractComtorFacadeAdministratorControlle
 
     private ActionIcon getAnswersIcon(Survey survey) {
         return new ActionIcon(getBaseUrl() + "&amp;action=surveyanswers&amp;key="
-                + getKey(survey), ActionIcon.VIEW_24, "Ver respuestas");
+                + getKey(survey), LitroDeLuzImages.SURVEY_ACTION, "Ver respuestas");
     }
 
     private HtmlTable listOpenQuestionAnswers(final LinkedList<Answer> answers) {

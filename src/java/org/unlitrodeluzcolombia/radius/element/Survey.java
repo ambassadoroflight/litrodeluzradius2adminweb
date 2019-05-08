@@ -30,7 +30,7 @@ public class Survey implements Serializable {
 
     @ComtorForeingField(referencesClass = Campaign.class, foreingColumn = "description", referencesColumn = "campaign")
     private String campaign_description;
-
+    
     public Survey() {
     }
 

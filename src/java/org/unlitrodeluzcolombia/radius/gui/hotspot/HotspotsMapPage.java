@@ -24,6 +24,7 @@ import net.comtor.radius.element.Sponsor;
 import net.comtor.radius.facade.CountryDAOFacade;
 import net.comtor.radius.facade.HotspotDAOFacade;
 import net.comtor.radius.facade.SponsorDAOFacade;
+import org.unlitrodeluzcolombia.radius.gui.FormUtils;
 import web.global.GlobalWeb;
 import web.global.LitroDeLuzImages;
 
@@ -93,8 +94,8 @@ public class HotspotsMapPage extends HtmlGuiInterface {
             DivForm filter = new DivForm("", "GET");
             filter.setFormName("hotspot_map_filter");
             filter.setTitle("Buscar");
-            filter.addField("Patrocinador", getSponsorSelect(), null);
-            filter.addField("Pais", getCountry(), null);
+            filter.addField("Patrocinador", FormUtils.getSponsorSelect(), null);
+            filter.addField("Pais", FormUtils.getCountrySelect(), null);
 
             HtmlSelect zone = new HtmlSelect("zone");
             zone.addOption("0", "Todas");
@@ -131,36 +132,6 @@ public class HotspotsMapPage extends HtmlGuiInterface {
     @Override
     public boolean requireComtorSession() {
         return true;
-    }
-
-    private HtmlSelect getSponsorSelect() throws ComtorDaoException {
-        HtmlSelect select = new HtmlSelect("sponsor");
-        select.addOption("0", "Todos");
-
-        List<Sponsor> sponsors = new SponsorDAOFacade().findAll();
-
-        if (!sponsors.isEmpty()) {
-            for (Sponsor sponsor : sponsors) {
-                select.addOption(sponsor.getId() + "", sponsor.getName());
-            }
-        }
-
-        return select;
-    }
-
-    private HtmlSelect getCountry() throws ComtorDaoException {
-        HtmlSelect select = new HtmlSelect("country");
-        select.addOption("", "Todos");
-
-        List<Country> countries = new CountryDAOFacade().findAll();
-
-        if (!countries.isEmpty()) {
-            for (Country country : countries) {
-                select.addOption(country.getIso(), country.getName());
-            }
-        }
-
-        return select;
     }
 
     private HtmlJavaScript getJS() {
