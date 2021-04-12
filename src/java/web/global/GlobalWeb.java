@@ -19,7 +19,7 @@ public class GlobalWeb {
     public static final String NAME_CONNECTION = "litrodeluz_radius2";
     public static final ConnectionType CONNECTION_TYPE = ConnectionType.DEVELOPMENT;
 
-    public static String GOOGLE_MAPS_KEY = "AIzaSyBRAjw1bn9DIEzmZmpGxa0Ea8lBdbjZU2o";
+    public static String GOOGLE_MAPS_KEY = "";
     public static String W3W_API_KEY = "";
 
     public static final String BASE_PATH = File.separator + "opt";
@@ -38,7 +38,7 @@ public class GlobalWeb {
             case TEST:
                 VERSION += " (Desarrollo)";
                 W3W_API_KEY += "NZ6O96VC";
-                GOOGLE_MAPS_KEY = "AIzaSyBRAjw1bn9DIEzmZmpGxa0Ea8lBdbjZU2o";
+                GOOGLE_MAPS_KEY = "";
                 break;
         }
     }
